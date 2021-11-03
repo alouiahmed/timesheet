@@ -4,8 +4,7 @@ pipeline {
 	
 	environment { 
         registry = "alouiahmed/timesheet" 
-		registryCredential = 'dockerHub'
-        dockerImage = '' 
+		
        
     }
 
@@ -23,22 +22,12 @@ pipeline {
                   }
             }
 
-            stage('Building Image'){
+            stage('Nexus Deploy'){
 				steps{
-					script{
-						dockerImage = docker.build registry + ":$BUILD_NUMBER"
-					}
+					bat "mvn deploy"
 				}				
 			}
-
-			stage('Deploy Image'){
-				steps{
-					script{
-						docker.withRegistry( '', registryCredential ) 
-                        {dockerImage.push()}
-					}
-				}
-			}					
+		
 			
 			
 
