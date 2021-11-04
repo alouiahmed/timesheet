@@ -2,6 +2,7 @@ package tn.esprit.spring.services;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -63,10 +64,15 @@ public class EntrepriseServiceImpl implements IEntrepriseService {
 
 		try{
 			l.debug("Je vais  lancer affecterDepartementAEntreprise");
-			Entreprise entrepriseManagedEntity = entrepriseRepoistory.findById(entrepriseId).get();
-			Departement depManagedEntity = deptRepoistory.findById(depId).get();
-			depManagedEntity.setEntreprise(entrepriseManagedEntity);
-			deptRepoistory.save(depManagedEntity);
+			Optional<Entreprise> entrepriseManagedEntity = entrepriseRepoistory.findById(entrepriseId);
+			Optional <Departement> depManagedEntity = deptRepoistory.findById(depId);
+			
+			if(depManagedEntity.isPresent() && entrepriseManagedEntity.isPresent()){
+				depManagedEntity.get().setEntreprise(entrepriseManagedEntity.get());
+				deptRepoistory.save(depManagedEntity.get());
+
+			}
+			
 			
 			l.info("Département est affectée à une entreprise avec succès");
 		}
@@ -86,11 +92,14 @@ public class EntrepriseServiceImpl implements IEntrepriseService {
 		List<String> depNames = new ArrayList<>();
 		try{
 			l.debug("Je vais lancer getAllDepartementsNamesByEntreprise()");
-			Entreprise entrepriseManagedEntity = entrepriseRepoistory.findById(entrepriseId).get();
-			for(Departement dep : entrepriseManagedEntity.getDepartements()){
-				depNames.add(dep.getName());
-			}
-			
+			Optional<Entreprise> entrepriseManagedEntity = entrepriseRepoistory.findById(entrepriseId);
+
+			if(entrepriseManagedEntity.isPresent()){
+			    Entreprise entreprise = entrepriseManagedEntity.get();
+				for(Departement dep : entreprise.getDepartements()){
+					depNames.add(dep.getName());
+				}
+			}	
 			l.info("la méthode getAllDepartementsNamesByEntreprise est réalisé avec succès");
 		}
 		catch(Exception e){
@@ -106,9 +115,12 @@ public class EntrepriseServiceImpl implements IEntrepriseService {
 	@Transactional
 	public void deleteEntrepriseById(int entrepriseId) {
 		try{
-			l.debug("lancement deleteEntrepriseById()");			
+			l.debug("lancement deleteEntrepriseById()");		
+			Optional<Entreprise> entreprise = entrepriseRepoistory.findById(entrepriseId);
 			
-			entrepriseRepoistory.delete(entrepriseRepoistory.findById(entrepriseId).get());	
+			if(entreprise.isPresent()){	
+				entrepriseRepoistory.delete(entreprise.get());	
+			}
 			
 			l.info("la méthode deleteEntrepriseById() est réalisée avec succès");
 		}
@@ -125,9 +137,11 @@ public class EntrepriseServiceImpl implements IEntrepriseService {
 	public void deleteDepartementById(int depId) {
 		try{
 			l.debug("lancement deleteDepartementById()");			
+			Optional <Departement> departement = deptRepoistory.findById(depId);
+			if(departement.isPresent()){
+				deptRepoistory.delete(departement.get());
+			}
 			
-			deptRepoistory.delete(deptRepoistory.findById(depId).get());	
-
 			l.info("la méthode deleteDepartementById() est réalisée avec succès");
 		}
 		catch(Exception e){
@@ -142,8 +156,11 @@ public class EntrepriseServiceImpl implements IEntrepriseService {
 	public Entreprise getEntrepriseById(int entrepriseId) {
 		Entreprise entreprise = null ;
 		try{
-			l.debug("lancement getEntrepriseById()");			
-			entreprise = entrepriseRepoistory.findById(entrepriseId).get();
+			l.debug("lancement getEntrepriseById()");	
+			Optional <Entreprise> entre = entrepriseRepoistory.findById(entrepriseId);
+			if(entre.isPresent()){
+				entreprise = entre.get();
+			}
 			l.info("la méthode getEntrepriseById() est réalisée avec succès");
 
 		}
