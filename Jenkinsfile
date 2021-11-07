@@ -11,6 +11,12 @@ pipeline {
 
 	stages{
 			
+			stage('Clean'){
+				steps{
+					cleanWs()
+				}				
+			}
+			
 			stage('Test & Build'){
 				steps{
 					bat "mvn clean"
@@ -49,11 +55,7 @@ pipeline {
 				}
 			}
 			
-			post { 
-				cleanup { 
-					cleanWs()
-				}
-			}
+			
 		
 			
 		
