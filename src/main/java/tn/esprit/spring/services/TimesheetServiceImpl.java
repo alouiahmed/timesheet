@@ -35,22 +35,45 @@ public class TimesheetServiceImpl implements ITimesheetService {
 	EmployeRepository employeRepository;
 	
 	public int ajouterMission(Mission mission) {
-		missionRepository.save(mission);
-		l.debug("l'ajout d'un mission");
+		try{
+			l.debug("lancement de l'ajout d'une mission");
+			missionRepository.save(mission);
+			l.info("Mission est ajouté avec succès");
+		}
+		catch(Exception e){
+			l.error("Erreur dans l'ajout de la mission ajouterMission()!!"+ e);
+		}
+		finally{
+			l.info("la méthode ajouterMission() est finie");
+		}
+	
 		return mission.getId();
 		
 	}
     
 	public void affecterMissionADepartement(int missionId, int depId) {
+		try{
+			
+		l.debug("lancement de la méthode affecterMissionADepartement");
 		Mission mission = missionRepository.findById(missionId).get();
 		Departement dep = deptRepoistory.findById(depId).get();
 		mission.setDepartement(dep);
 		missionRepository.save(mission);
-		l.debug("l'affectation d'un mission à un départment");
+		
+		l.info("Département est affectée à une mission avec succès");
+		}
+		catch(Exception e){
+			l.error("Erreur dans la méthode affecterMissionADepartement()!!"+ e);
+		}
+		finally{
+			l.info("la méthode affecterDepartementAEntreprise() est finie");
+		}
 		
 	}
 
 	public void ajouterTimesheet(int missionId, int employeId, Date dateDebut, Date dateFin) {
+		try{
+			l.debug("lancement de l'ajout d'un Timesheet");
 		TimesheetPK timesheetPK = new TimesheetPK();
 		timesheetPK.setDateDebut(dateDebut);
 		timesheetPK.setDateFin(dateFin);
@@ -61,19 +84,24 @@ public class TimesheetServiceImpl implements ITimesheetService {
 		timesheet.setTimesheetPK(timesheetPK);
 		timesheet.setValide(false); //par defaut non valide
 		timesheetRepository.save(timesheet);
-		
+		l.info("Timesheet est ajouté avec succès");
+		}
+		catch(Exception e){
+			l.error("Erreur dans l'ajout du Timesheet ajouterTimesheet()!!"+ e);
+		}
+		finally{
+			l.info("la méthode ajouterTimesheet est finie");
+		}
 	}
 
 	
 	public void validerTimesheet(int missionId, int employeId, Date dateDebut, Date dateFin, int validateurId) {
-		//System.out.println("In valider Timesheet");
-		l.info("In valider Timesheet");
+		l.info("Validation de Timesheet");
 		
 		Employe validateur = employeRepository.findById(validateurId).get();
 		Mission mission = missionRepository.findById(missionId).get();
 		//verifier s'il est un chef de departement (interet des enum)
 		if(!validateur.getRole().equals(Role.CHEF_DEPARTEMENT)){
-			//System.out.println("l'employe doit etre chef de departement pour valider une feuille de temps !");
 			l.warn("l'employe doit etre chef de departement pour valider une feuille de temps !");
 			return;
 		}
@@ -87,28 +115,31 @@ public class TimesheetServiceImpl implements ITimesheetService {
 			}
 		}
 		if(!chefDeLaMission){
-			//System.out.println("l'employe doit etre chef de departement de la mission en question");
 			l.warn("l'employe doit etre chef de departement de la mission en question");
 			return;
 		}
-//
+
 		TimesheetPK timesheetPK = new TimesheetPK(missionId, employeId, dateDebut, dateFin);
 		Timesheet timesheet =timesheetRepository.findBytimesheetPK(timesheetPK);
 		timesheet.setValide(true);
 		
 		//Comment Lire une date de la base de données
 		SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
-		//System.out.println("dateDebut : " + dateFormat.format(timesheet.getTimesheetPK().getDateDebut()));
 		l.info("dateDebut : " + dateFormat.format(timesheet.getTimesheetPK().getDateDebut()));
 	}
 
 	
 	public List<Mission> findAllMissionByEmployeJPQL(int employeId) {
+		l.debug("Recherche de tous les missions selon l'employee");	
+	    l.info("Les missions affectés à l'employee d'id " + employeId + "sont:" );
 		return timesheetRepository.findAllMissionByEmployeJPQL(employeId);
+		
 	}
 
 	
 	public List<Employe> getAllEmployeByMission(int missionId) {
+		l.debug("Recherche de tous les employees qui partagent la meme mission");
+		l.info("Les employees qui partagent la mission d'id " + missionId + "sont:" );
 		return timesheetRepository.getAllEmployeByMission(missionId);
 	}
 
