@@ -1,6 +1,7 @@
 package tn.esprit.spring.services;
 
 import java.util.ArrayList;
+import org.apache.log4j.Logger;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
@@ -22,6 +23,8 @@ import tn.esprit.spring.repository.TimesheetRepository;
 
 @Service
 public class EmployeServiceImpl implements IEmployeService {
+	
+	static Logger log = Logger.getLogger(EmployeServiceImpl.class);
 
 	@Autowired
 	EmployeRepository employeRepository;
@@ -97,17 +100,40 @@ public class EmployeServiceImpl implements IEmployeService {
 	// Tablesapce (espace disque) 
 
 	public int ajouterContrat(Contrat contrat) {
+		try {
+			
+		
+		log.debug("Je vais  lancer l'ajout du contrat");
 		contratRepoistory.save(contrat);
+		log.info("contrat ajouté avec succés");
 		return contrat.getReference();
+		}
+	catch(Exception e){
+		log.error("Erreur ajout contrat!!"+ e);
+		return 0;
 	}
+	finally{
+		log.info("la méthode ajouterContrat() est finie");
+	}}
 
 	public void affecterContratAEmploye(int contratId, int employeId) {
+		try {
+			
+		
+		log.debug("Je vais  lancer l'affectation du contrat a l'employe");
 		Optional<Contrat> contratManagedEntity = contratRepoistory.findById(contratId);
 		Optional<Employe> employeManagedEntity = employeRepository.findById(employeId);
 
 		if (contratManagedEntity.isPresent() && employeManagedEntity.isPresent()) {
 			contratManagedEntity.get().setEmploye(employeManagedEntity.get());
 			contratRepoistory.save(contratManagedEntity.get());
+			log.info("affectation du contrat a l'employe avec succés");
+		}}
+		catch(Exception e){
+			log.error("Erreur affecterContratAEmploye!!"+ e);
+		}
+		finally{
+			log.info("la méthode affecterContratAEmploye() est finie");
 		}
 		
 
@@ -141,9 +167,22 @@ public class EmployeServiceImpl implements IEmployeService {
 	}
 
 	public void deleteContratById(int contratId) {
-		Optional<Contrat> contratManagedEntity = contratRepoistory.findById(contratId);
-		if (contratManagedEntity.isPresent())
-		contratRepoistory.delete(contratManagedEntity.get());
+		try {
+			log.debug("Je vais  lancer la suppression du contrat");
+			Optional<Contrat> contratManagedEntity = contratRepoistory.findById(contratId);
+			if (contratManagedEntity.isPresent())
+			{
+				contratRepoistory.delete(contratManagedEntity.get());
+				log.info("contrat supprimé avec succés");	
+			}
+		}catch(Exception e){
+			log.error("Erreur deleteContratById!!"+ e);
+		}
+		finally{
+			log.info("la méthode deleteContratById() est finie");
+		}
+		
+		
 
 	}
 
@@ -165,7 +204,17 @@ public class EmployeServiceImpl implements IEmployeService {
 
 	}
 	public void deleteAllContratJPQL() {
-		employeRepository.deleteAllContratJPQL();
+		try {
+			log.debug("Je vais  lancer la suppression de tous les contrats");
+			employeRepository.deleteAllContratJPQL();
+			log.info("tous les contrats sont supprimés avec succés");
+		}catch(Exception e){
+			log.error("Erreur deleteAllContratJPQL!!"+ e);
+		}
+		finally{
+			log.info("la méthode deleteAllContratJPQL() est finie");
+		}
+		
 	}
 
 	public float getSalaireByEmployeIdJPQL(int employeId) {

@@ -80,9 +80,9 @@ public class EntrepriseServiceImpl implements IEntrepriseService {
 
 	public Entreprise getEntrepriseById(int entrepriseId) {
 		Optional<Entreprise> entreprise = entrepriseRepoistory.findById(entrepriseId);
-		if (entreprise.isPresent()) {
+		if (entreprise.isPresent()) 
 			return entreprise.get();	
-		}else 
+		else 
 			return null;
 		
 	}

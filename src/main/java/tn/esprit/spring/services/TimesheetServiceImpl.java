@@ -1,6 +1,7 @@
 package tn.esprit.spring.services;
 
 import java.text.SimpleDateFormat;
+import org.apache.log4j.Logger;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
@@ -21,6 +22,8 @@ import tn.esprit.spring.repository.TimesheetRepository;
 
 @Service
 public class TimesheetServiceImpl implements ITimesheetService {
+	
+	static Logger log = Logger.getLogger(TimesheetServiceImpl.class);
 	
 
 	@Autowired
@@ -65,13 +68,13 @@ public class TimesheetServiceImpl implements ITimesheetService {
 
 	
 	public void validerTimesheet(int missionId, int employeId, Date dateDebut, Date dateFin, int validateurId) {
-		System.out.println("In valider Timesheet");
+		log.info("In valider Timesheet");
 		Optional<Employe> validateur = employeRepository.findById(validateurId);
 		Optional<Mission> mission = missionRepository.findById(missionId);
 		if (validateur.isPresent() && mission.isPresent()) {
 			//verifier s'il est un chef de departement (interet des enum)
 			if(!validateur.get().getRole().equals(Role.CHEF_DEPARTEMENT)){
-				System.out.println("l'employe doit etre chef de departement pour valider une feuille de temps !");
+				log.info("l'employe doit etre chef de departement pour valider une feuille de temps !");
 				return;
 			}
 			//verifier s'il est le chef de departement de la mission en question
@@ -83,7 +86,7 @@ public class TimesheetServiceImpl implements ITimesheetService {
 				}
 			}
 			if(!chefDeLaMission){
-				System.out.println("l'employe doit etre chef de departement de la mission en question");
+				log.info("l'employe doit etre chef de departement de la mission en question");
 				return;
 			}
 	//
@@ -93,7 +96,7 @@ public class TimesheetServiceImpl implements ITimesheetService {
 			
 			//Comment Lire une date de la base de données
 			SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
-			System.out.println("dateDebut : " + dateFormat.format(timesheet.getTimesheetPK().getDateDebut()));
+			log.info("dateDebut : " + dateFormat.format(timesheet.getTimesheetPK().getDateDebut()));
 		}
 	
 		
