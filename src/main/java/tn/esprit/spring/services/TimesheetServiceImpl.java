@@ -102,7 +102,7 @@ public class TimesheetServiceImpl implements ITimesheetService {
 		Mission mission = missionRepository.findById(missionId).get();
 		//verifier s'il est un chef de departement (interet des enum)
 		if(!validateur.getRole().equals(Role.CHEF_DEPARTEMENT)){
-			l.warn("l'employe doit etre chef de departement pour valider une feuille de temps !");
+			l.info("l'employe doit etre chef de departement pour valider une feuille de temps !");
 			return;
 		}
 		//verifier s'il est le chef de departement de la mission en question
@@ -115,7 +115,7 @@ public class TimesheetServiceImpl implements ITimesheetService {
 			}
 		}
 		if(!chefDeLaMission){
-			l.warn("l'employe doit etre chef de departement de la mission en question");
+			l.info("l'employe doit etre chef de departement de la mission en question");
 			return;
 		}
 
@@ -131,7 +131,7 @@ public class TimesheetServiceImpl implements ITimesheetService {
 	
 	public List<Mission> findAllMissionByEmployeJPQL(int employeId) {
 		l.debug("Recherche de tous les missions selon l'employee");	
-	    l.info("Les missions affectés à l'employee d'id " + employeId + "sont:" );
+	    l.info("Les missions affectés à l'employee d'id " +  employeId  +    "sont:" );
 		return timesheetRepository.findAllMissionByEmployeJPQL(employeId);
 		
 	}
@@ -139,7 +139,7 @@ public class TimesheetServiceImpl implements ITimesheetService {
 	
 	public List<Employe> getAllEmployeByMission(int missionId) {
 		l.debug("Recherche de tous les employees qui partagent la meme mission");
-		l.info("Les employees qui partagent la mission d'id " + missionId + "sont:" );
+		l.info("Les employees qui partagent la mission d'id " +  missionId  +   "sont:" );
 		return timesheetRepository.getAllEmployeByMission(missionId);
 	}
 
