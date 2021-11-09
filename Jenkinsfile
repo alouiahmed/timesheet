@@ -1,6 +1,12 @@
 pipeline {	
 
 	agent any 
+	environment { 
+        registry = "bennada/timesheet" 
+		registryCredential = 'dockerHub'
+        dockerImage = '' 
+       
+    }
 	
 	stages{ 
 			
@@ -24,13 +30,29 @@ pipeline {
             }
 
 			
-			stage('Cleanup Workspace'){
+			stage('Building Docker Image'){
+				steps{
+					script{
+						dockerImage = docker.build registry + ":$BUILD_NUMBER"
+					}
+				}				
+			}
+
+			stage('Pushing Docker Image'){
+				steps{
+					script{
+						docker.withRegistry( '', registryCredential ) 
+                        {dockerImage.push()}
+					}
+				}
+			}
+			
+		    
+		    stage('Cleanup Workspace'){
 				steps{
 					cleanWs()
 				}				
 			}
-			
-		
 			
 		
 			
