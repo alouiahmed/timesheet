@@ -3,6 +3,7 @@ package tn.esprit.spring.services;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -44,43 +45,71 @@ public class EmployeServiceImpl implements IEmployeService {
 
 
 	public void mettreAjourEmailByEmployeId(String email, int employeId) {
-		Employe employe = employeRepository.findById(employeId).get();
-		employe.setEmail(email);
-		employeRepository.save(employe);
+		Optional<Employe> employeOPt = employeRepository.findById(employeId);
+
+		if (employeOPt.isPresent() )
+		{
+			Employe employe=employeOPt.get();
+			employe.setEmail(email);
+			employeRepository.save(employe);	
+		}
+	
 
 	}
 
 	@Transactional	
 	public void affecterEmployeADepartement(int employeId, int depId) {
-		Departement depManagedEntity = deptRepoistory.findById(depId).get();
-		Employe employeManagedEntity = employeRepository.findById(employeId).get();
-
-		if(depManagedEntity.getEmployes() == null){
-
-			List<Employe> employes = new ArrayList<>();
-			employes.add(employeManagedEntity);
-			depManagedEntity.setEmployes(employes);
-		}else{
-
-			depManagedEntity.getEmployes().add(employeManagedEntity);
+		
+		Optional<Employe> employeOPt = employeRepository.findById(employeId);
+		Employe employeManagedEntity =null;
+		if (employeOPt.isPresent() )
+		{
+			 employeManagedEntity=employeOPt.get();
+		
 		}
+		
+		Optional<Departement> depManagedEntityOPt = deptRepoistory.findById(depId);
+		Departement depManagedEntity =null;
+		if (depManagedEntityOPt.isPresent() )
+		{
+			depManagedEntity=depManagedEntityOPt.get();
 
-		// à ajouter? 
-		deptRepoistory.save(depManagedEntity); 
+			if(depManagedEntity.getEmployes() == null){
+
+				List<Employe> employes = new ArrayList<>();
+				employes.add(employeManagedEntity);
+				depManagedEntity.setEmployes(employes);
+			}else{
+
+				depManagedEntity.getEmployes().add(employeManagedEntity);
+			}
+
+			// à ajouter? 
+			deptRepoistory.save(depManagedEntity); 
+		}
+	
 
 	}
 	@Transactional
 	public void desaffecterEmployeDuDepartement(int employeId, int depId)
 	{
-		Departement dep = deptRepoistory.findById(depId).get();
-
-		int employeNb = dep.getEmployes().size();
-		for(int index = 0; index < employeNb; index++){
-			if(dep.getEmployes().get(index).getId() == employeId){
-				dep.getEmployes().remove(index);
-				break;//a revoir
+		
+		Optional<Departement> depManagedEntityOPt = deptRepoistory.findById(depId);
+		Departement dep =null;
+		if (depManagedEntityOPt.isPresent() )
+		{
+			dep=depManagedEntityOPt.get();
+			int employeNb = dep.getEmployes().size();
+			for(int index = 0; index < employeNb; index++){
+				if(dep.getEmployes().get(index).getId() == employeId){
+					dep.getEmployes().remove(index);
+					break;//a revoir
+				}
 			}
+		
 		}
+	
+		
 	} 
 	
 	// Tablesapce (espace disque) 
@@ -91,35 +120,74 @@ public class EmployeServiceImpl implements IEmployeService {
 	}
 
 	public void affecterContratAEmploye(int contratId, int employeId) {
-		Contrat contratManagedEntity = contratRepoistory.findById(contratId).get();
-		Employe employeManagedEntity = employeRepository.findById(employeId).get();
-
-		contratManagedEntity.setEmploye(employeManagedEntity);
-		contratRepoistory.save(contratManagedEntity);
+	
+		Optional<Contrat> ContratOPt = contratRepoistory.findById(contratId);
+		Contrat contratManagedEntity =null;
+		if (ContratOPt.isPresent() )
+		{
+			contratManagedEntity=ContratOPt.get();
+		
+		}
+		Optional<Employe> employeOPt = employeRepository.findById(employeId);
+		Employe employeManagedEntity =null;
+		if (employeOPt.isPresent() )
+		{
+			employeManagedEntity=employeOPt.get();
+		
+		}
+		
+		if (employeManagedEntity != null & contratManagedEntity != null)
+		{
+			
+			contratManagedEntity.setEmploye(employeManagedEntity);
+			contratRepoistory.save(contratManagedEntity);
+		}
+	
 
 	}
 
 	public String getEmployePrenomById(int employeId) {
-		Employe employeManagedEntity = employeRepository.findById(employeId).get();
-		return employeManagedEntity.getPrenom();
+	
+		Optional<Employe> employeOPt = employeRepository.findById(employeId);
+		Employe employeManagedEntity =null;
+		if (employeOPt.isPresent() )
+		{
+			employeManagedEntity=employeOPt.get();
+			return employeManagedEntity.getPrenom();
+		}
+		return null;
 	}
 	 
 	public void deleteEmployeById(int employeId)
 	{
-		Employe employe = employeRepository.findById(employeId).get();
+		
+		Optional<Employe> employeOPt = employeRepository.findById(employeId);
+		Employe employe =null;
+		if (employeOPt.isPresent() )
+		{
+			employe=employeOPt.get();
+			//Desaffecter l'employe de tous les departements
+			//c'est le bout master qui permet de mettre a jour
+			//la table d'association
+			for(Departement dep : employe.getDepartements()){
+				dep.getEmployes().remove(employe);
+			}
 
-		//Desaffecter l'employe de tous les departements
-		//c'est le bout master qui permet de mettre a jour
-		//la table d'association
-		for(Departement dep : employe.getDepartements()){
-			dep.getEmployes().remove(employe);
+			employeRepository.delete(employe);
+		
 		}
-
-		employeRepository.delete(employe);
+		
 	}
 
 	public void deleteContratById(int contratId) {
-		Contrat contratManagedEntity = contratRepoistory.findById(contratId).get();
+
+		Optional<Contrat> ContratOPt = contratRepoistory.findById(contratId);
+		Contrat contratManagedEntity =null;
+		if (ContratOPt.isPresent() )
+		{
+			contratManagedEntity=ContratOPt.get();
+		
+		}
 		contratRepoistory.delete(contratManagedEntity);
 
 	}
