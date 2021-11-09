@@ -81,8 +81,9 @@ public class EntrepriseServiceImpl implements IEntrepriseService {
 		Optional<Entreprise> entreprise = entrepriseRepoistory.findById(entrepriseId);
 		if (entreprise.isPresent()) {
 			return entreprise.get();	
-		}else 
-			return null;
+		}else
+			
+			{return null;}
 	}
 
 }
