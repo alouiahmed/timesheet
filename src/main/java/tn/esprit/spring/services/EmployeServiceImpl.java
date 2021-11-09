@@ -19,10 +19,11 @@ import tn.esprit.spring.repository.ContratRepository;
 import tn.esprit.spring.repository.DepartementRepository;
 import tn.esprit.spring.repository.EmployeRepository;
 import tn.esprit.spring.repository.TimesheetRepository;
-
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 @Service
 public class EmployeServiceImpl implements IEmployeService {
-
+	private static final Logger l = LogManager.getLogger(EmployeServiceImpl.class);
 	@Autowired
 	EmployeRepository employeRepository;
 	@Autowired
@@ -34,25 +35,51 @@ public class EmployeServiceImpl implements IEmployeService {
 
 	@Override
 	public Employe authenticate(String login, String password) {
-		return employeRepository.getEmployeByEmailAndPassword(login, password);
+	
+			return employeRepository.getEmployeByEmailAndPassword(login, password);
+
+	
 	}
 
 	@Override
 	public int addOrUpdateEmploye(Employe employe) {
-		employeRepository.save(employe);
+		try{
+			l.debug("lancement de l'ajout ou update d'une employee");
+			employeRepository.save(employe);	
+			l.info("employee est ajouté ou update avec succès");
+		}
+		catch(Exception e){
+			l.error("Erreur dans l'ajout de la employee addOrUpdateEmploye()!!"+ e);
+		}
+		finally{
+			l.info("la méthode addOrUpdateEmploye() est finie");
+		}
 		return employe.getId();
 	}
 
 
 	public void mettreAjourEmailByEmployeId(String email, int employeId) {
-		Optional<Employe> employeOPt = employeRepository.findById(employeId);
+		try{
+			l.debug("lancement de mettreAjourEmailByEmployeId d'une employee");
+			Optional<Employe> employeOPt = employeRepository.findById(employeId);
 
-		if (employeOPt.isPresent() )
-		{
-			Employe employe=employeOPt.get();
-			employe.setEmail(email);
-			employeRepository.save(employe);	
+			if (employeOPt.isPresent() )
+			{
+				Employe employe=employeOPt.get();
+				employe.setEmail(email);
+				employeRepository.save(employe);	
+			}
+			l.info("employee est ajour avec succès");
 		}
+		catch(Exception e){
+			l.error("Erreur dans a jour de la employee !!"+ e);
+		}
+		finally{
+			l.info("la méthode mettreAjourEmailByEmployeId() est finie");
+		}
+		
+		
+
 	
 
 	}
@@ -180,15 +207,26 @@ public class EmployeServiceImpl implements IEmployeService {
 	}
 
 	public void deleteContratById(int contratId) {
-
-		Optional<Contrat> ContratOPt = contratRepoistory.findById(contratId);
-		Contrat contratManagedEntity =null;
-		if (ContratOPt.isPresent() )
-		{
-			contratManagedEntity=ContratOPt.get();
-		
+		try{
+			l.debug("lancement de deleteContratById");
+					Optional<Contrat> ContratOPt = contratRepoistory.findById(contratId);
+			Contrat contratManagedEntity =null;
+			if (ContratOPt.isPresent() )
+			{
+				contratManagedEntity=ContratOPt.get();
+			
+			}
+			contratRepoistory.delete(contratManagedEntity);
+			l.info("deleteContratById avec succès");
 		}
-		contratRepoistory.delete(contratManagedEntity);
+		catch(Exception e){
+			l.error("Erreur dans deleteContratById !!"+ e);
+		}
+		finally{
+			l.info("la méthode deleteContratById() est finie");
+		}
+		
+	
 
 	}
 
@@ -210,10 +248,22 @@ public class EmployeServiceImpl implements IEmployeService {
 
 	}
 	public void deleteAllContratJPQL() {
-		employeRepository.deleteAllContratJPQL();
+		try{
+			l.debug("lancement de Delete ou update d'une employee");
+			employeRepository.deleteAllContratJPQL();
+			l.info("all contrat est ajouté ou update avec succès");
+		}
+		catch(Exception e){
+			l.error("Erreur dans deleteAllContratJPQL()!!"+ e);
+		}
+		finally{
+			l.info("la méthode deleteAllContratJPQL() est finie");
+		}
+		
 	}
 
 	public float getSalaireByEmployeIdJPQL(int employeId) {
+		
 		return employeRepository.getSalaireByEmployeIdJPQL(employeId);
 	}
 
