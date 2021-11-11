@@ -1,6 +1,11 @@
 pipeline {
     agent any
-    
+    environment { 
+        registry = "1710789/timesheet" 
+        registryCredential = 'dockerHub'
+        dockerImage = '' 
+       
+    }
     stages {
         stage ('GIT') {
             steps {
@@ -45,12 +50,22 @@ pipeline {
 
             }            
         }
-                stage('Build Docker Image') {
-
-            steps {
-                bat 'docker build -t aymenouer/timesheet:latest .'
+           stage('Building Docker Image'){
+                steps{
+                    script{
+                        dockerImage = docker.build registry + ":$BUILD_NUMBER"
+                    }
+                }               
             }
-        }
+
+            stage('Pushing Docker Image'){
+                steps{
+                    script{
+                        docker.withRegistry( '', registryCredential ) 
+                        {dockerImage.push()}
+                    }
+                }
+            }
             
         
 }
