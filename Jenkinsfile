@@ -5,6 +5,13 @@ pipeline {
     jdk "java"
     maven "maven"
 }
+
+environment { 
+        registry = "alouiahmed/timesheet" 
+		registryCredential = 'dockerHub'
+        dockerImage = '' 
+       
+    }
 	
 	stages{ 
 			
@@ -27,6 +34,22 @@ pipeline {
                   }
             }
 
+	stage('Building Docker Image'){
+				steps{
+					script{
+						dockerImage = docker.build registry + ":$BUILD_NUMBER"
+					}
+				}				
+			}
+
+			stage('Pushing Docker Image'){
+				steps{
+					script{
+						docker.withRegistry( '', registryCredential ) 
+                        {dockerImage.push()}
+					}
+				}
+			}
            
 			
 			
