@@ -38,8 +38,14 @@ class TimesheetApplicationTests {
 	ITimesheetService itimesheetService;
 	@Test
 	void contextLoads() {
+		//employee test
+		Employe emp = new Employe("Ouerghui","Aymen","aymen.ouerghui@esprit.tn","123456",true,Role.INGENIEUR);
+		iEmployeService.addOrUpdateEmploye(emp);
 		
-	
+		//iEmployeService.authenticate("aymen.ouerghui@esprit.tn", "123");
+		Employe loggedIn= iEmployeService.authenticate("aymen.ouerghui@esprit.tn", "123456");
+		
+		
 				
 	}
 
