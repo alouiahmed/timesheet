@@ -45,7 +45,7 @@ pipeline {
 
             }            
         }
-                stage('Build Docker Images') {
+                stage('Build Docker Image') {
 
             steps {
                 bat 'docker build -t aymenouer/timesheet:latest .'
