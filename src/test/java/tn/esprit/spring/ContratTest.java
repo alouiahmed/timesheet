@@ -82,7 +82,7 @@ public class ContratTest {
 			try{
 				l.debug("lancement testDeleteAllContrat()");			
 				
-				restControlEmploye.deleteAllContratJPQL();;
+				restControlEmploye.deleteAllContratJPQL();
 				
 				l.info("testDeleteAllContrat avec succès");
 			}
