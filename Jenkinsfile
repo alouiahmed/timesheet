@@ -29,6 +29,7 @@ pipeline {
                     bat "mvn sonar:sonar"
                   }
             }
+			
 
            
 			stage('Building Docker Image'){
@@ -47,6 +48,17 @@ pipeline {
 					}
 				}
 			}
+			
+			
+			stage ('Email notification') {
+            
+            steps{
+            emailext attachLog: true, body: 'Logs', subject: 'Timesheet logs', to: 'alouiahmed3897@gmail.com'
+
+            }            
+            }
+			
+			
 			
 			stage('Cleanup Workspace'){
 				steps{
