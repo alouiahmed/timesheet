@@ -148,11 +148,11 @@ public class EmployeServiceImpl implements IEmployeService {
 
 	public void affecterContratAEmploye(int contratId, int employeId) {
 	
-		Optional<Contrat> ContratOPt = contratRepoistory.findById(contratId);
+		Optional<Contrat> contratopt = contratRepoistory.findById(contratId);
 		Contrat contratManagedEntity =null;
-		if (ContratOPt.isPresent() )
+		if (contratopt.isPresent() )
 		{
-			contratManagedEntity=ContratOPt.get();
+			contratManagedEntity=contratopt.get();
 		
 		}
 		Optional<Employe> employeOPt = employeRepository.findById(employeId);
@@ -209,11 +209,11 @@ public class EmployeServiceImpl implements IEmployeService {
 	public void deleteContratById(int contratId) {
 		try{
 			l.debug("lancement de deleteContratById");
-					Optional<Contrat> ContratOPt = contratRepoistory.findById(contratId);
+					Optional<Contrat> contratopt = contratRepoistory.findById(contratId);
 			Contrat contratManagedEntity =null;
-			if (ContratOPt.isPresent() )
+			if (contratopt.isPresent() )
 			{
-				contratManagedEntity=ContratOPt.get();
+				contratManagedEntity=contratopt.get();
 			
 			}
 			contratRepoistory.delete(contratManagedEntity);
