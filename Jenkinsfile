@@ -6,12 +6,12 @@ pipeline {
     maven "maven"
 }
 
-/*environment { 
+environment { 
         registry = "najibaamri/timesheet" 
 		registryCredential = 'dockerHub'
         dockerImage = '' 
        
-    }*/
+    }
 	
 	stages{ 
 			
@@ -34,7 +34,7 @@ pipeline {
                   }
             }
 
-	/*stage('Building Docker Image'){
+	stage('Building Docker Image'){
 				steps{
 					script{
 						dockerImage = docker.build registry + ":$BUILD_NUMBER"
@@ -49,7 +49,7 @@ pipeline {
                         {dockerImage.push()}
 					}
 				}
-			}*/
+			}
            
 			
 			
