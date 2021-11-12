@@ -34,6 +34,7 @@ public class DepartementServiceImpl implements IDepartementService {
 
 	@Override
 	public Departement getDepBytId(int depId) {
+		
 		return deptRepoistory.findById(depId).get();	
 	}
 
