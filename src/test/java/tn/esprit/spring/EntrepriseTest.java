@@ -1,6 +1,12 @@
 package tn.esprit.spring;
 
+import java.text.MessageFormat;
+import java.time.Duration;
+import java.time.Instant;
+
 import org.apache.log4j.Logger;
+import org.junit.AfterClass;
+import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,7 +23,25 @@ public class EntrepriseTest {
 	@Autowired
 	RestControlEntreprise controlEntreprise;
 	
+	
 	private static final Logger l = Logger.getLogger(EntrepriseTest.class);
+	private static Instant startedAt;
+
+	@BeforeClass	
+	  public static  void initStartingTime() {
+		l.info("Appel avant tous les tests");
+		startedAt = Instant.now();
+		
+	}
+	
+	@AfterClass	
+	 public static  void showTestDuration() {
+		l.info("Appel après tous les tests");
+		Instant endedAt = Instant.now();
+		long duration = Duration.between(startedAt, endedAt).toMillis();
+		// String ,long , on a passer a MessageFormat
+		l.info(MessageFormat.format("Durée des tests : {0} ms", duration));
+	}
 	
 	@Test
 	 public void testajouterEntreprise(){
