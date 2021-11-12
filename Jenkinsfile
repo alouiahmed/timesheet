@@ -18,11 +18,7 @@ pipeline {
 				}				
 			}
 			
-			stage('Nexus Deploy'){
-				steps{
-					bat "mvn deploy"
-				}				
-			}
+			
 				
 			stage('Sonar Analyse'){
 				steps{
