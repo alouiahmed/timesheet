@@ -29,10 +29,10 @@ public class Departement implements Serializable {
 	@JsonIgnore
 	@ManyToMany
 	private List<Employe> employes;
-	
+	@JsonIgnore
 	@OneToMany(mappedBy="departement")
 	private List<Mission> missions;
-	
+	@JsonIgnore
 	@ManyToOne
 	private Entreprise entreprise;
 
@@ -41,6 +41,10 @@ public class Departement implements Serializable {
 	}
 	
 	public Departement(String name) {
+		this.name = name;
+	}
+	public Departement(int id,String name) {
+		this.id = id;
 		this.name = name;
 	}
 	
