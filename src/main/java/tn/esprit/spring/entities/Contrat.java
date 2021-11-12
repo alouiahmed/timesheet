@@ -10,8 +10,6 @@ import javax.persistence.Id;
 import javax.persistence.OneToOne;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
-import javax.validation.constraints.Pattern;
-
 @Entity
 public class Contrat implements Serializable {
 	
@@ -85,5 +83,12 @@ public class Contrat implements Serializable {
 		this.employe = employe;
 	}
 	
+	public float getTelephone() {
+		return telephone;
+	}
+
+	public void setTelephone(float telephone) {
+		this.telephone = telephone;
+	}
 	
 }

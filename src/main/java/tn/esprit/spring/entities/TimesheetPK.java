@@ -64,12 +64,12 @@ public class TimesheetPK implements Serializable {
 			if (other.dateDebut != null)
 				return false;
 		} else if (!dateDebut.equals(other.dateDebut))
-			return false;
+			{return false;}
 		if (dateFin == null) {
 			if (other.dateFin != null)
 				return false;
 		} else if (!dateFin.equals(other.dateFin))
-			return false;
+			{return false;}
 		if (idEmploye != other.idEmploye)
 			return false;
 		if (idMission != other.idMission)

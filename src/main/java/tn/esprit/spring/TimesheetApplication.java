@@ -13,9 +13,11 @@ import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.boot.web.servlet.ServletRegistrationBean;
 import org.springframework.context.annotation.Bean;
 
+
 import tn.esprit.spring.config.LoginFilter;
 
-@SpringBootApplication
+//@SpringBootApplication
+@SpringBootApplication(scanBasePackages = {"tn.esprit.spring"})
 @EnableAutoConfiguration
 public class TimesheetApplication {
 
