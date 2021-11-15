@@ -1,0 +1,317 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="fr"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>ControllerEmployeImpl.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">timesheet</a> &gt; <a href="index.source.html" class="el_package">tn.esprit.spring.controller</a> &gt; <span class="el_source">ControllerEmployeImpl.java</span></div><h1>ControllerEmployeImpl.java</h1><pre class="source lang-java linenums">package tn.esprit.spring.controller;
+
+import java.util.Date;
+import java.util.List;
+
+import javax.faces.application.FacesMessage;
+import javax.faces.context.FacesContext;
+import javax.validation.constraints.Pattern;
+
+import org.ocpsoft.rewrite.annotation.Join;
+import org.ocpsoft.rewrite.el.ELBeanName;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Scope;
+import org.springframework.stereotype.Controller;
+
+import tn.esprit.spring.entities.Contrat;
+import tn.esprit.spring.entities.Employe;
+import tn.esprit.spring.entities.Entreprise;
+import tn.esprit.spring.entities.Mission;
+import tn.esprit.spring.entities.Role;
+import tn.esprit.spring.entities.Timesheet;
+import tn.esprit.spring.services.IEmployeService;
+
+
+@Scope(value = &quot;session&quot;)
+@Controller(value = &quot;employeController&quot;)
+@ELBeanName(value = &quot;employeController&quot;)
+@Join(path = &quot;/&quot;, to = &quot;/login.jsf&quot;)
+<span class="nc" id="L29">public class ControllerEmployeImpl  {</span>
+
+	@Autowired
+	IEmployeService employeService;
+
+	private String login; 
+	private String password; 
+	private Boolean loggedIn;
+
+<span class="nc" id="L38">	private Employe authenticatedUser = null; </span>
+	private String prenom; 
+	private String nom; 
+	private String email;
+	private boolean actif;
+	private Role role;  
+<span class="nc" id="L44">	public Role[] getRoles() { return Role.values(); }</span>
+
+	private List&lt;Employe&gt; employes; 
+
+	private Integer employeIdToBeUpdated; // getter et setter
+
+
+	public String doLogin() {
+
+<span class="nc" id="L53">		String navigateTo = &quot;null&quot;;</span>
+<span class="nc" id="L54">		authenticatedUser=employeService.authenticate(login, password);</span>
+<span class="nc bnc" id="L55" title="All 4 branches missed.">		if (authenticatedUser != null &amp;&amp; authenticatedUser.getRole() == Role.ADMINISTRATEUR) {</span>
+<span class="nc" id="L56">			navigateTo = &quot;/pages/admin/welcome.xhtml?faces-redirect=true&quot;;</span>
+<span class="nc" id="L57">			loggedIn = true;</span>
+		}		
+
+		else
+		{
+			
+<span class="nc" id="L63">			FacesMessage facesMessage =</span>
+					new FacesMessage(&quot;Login Failed: Please check your username/password and try again.&quot;);
+<span class="nc" id="L65">			FacesContext.getCurrentInstance().addMessage(&quot;form:btn&quot;,facesMessage);</span>
+		}
+<span class="nc" id="L67">		return navigateTo;	</span>
+	}
+
+	public String doLogout()
+	{
+<span class="nc" id="L72">		FacesContext.getCurrentInstance().getExternalContext().invalidateSession();</span>
+	
+<span class="nc" id="L74">	return &quot;/login.xhtml?faces-redirect=true&quot;;</span>
+	}
+
+
+	public String addEmploye() {
+
+<span class="nc bnc" id="L80" title="All 4 branches missed.">		if (authenticatedUser==null || !loggedIn) return &quot;/login.xhtml?faces-redirect=true&quot;;</span>
+
+<span class="nc" id="L82">		employeService.addOrUpdateEmploye(new Employe(nom, prenom, email, password, actif, role)); </span>
+<span class="nc" id="L83">		return &quot;null&quot;; </span>
+	}  
+
+	public String removeEmploye(int employeId) {
+<span class="nc" id="L87">		String navigateTo = &quot;null&quot;;</span>
+<span class="nc bnc" id="L88" title="All 4 branches missed.">		if (authenticatedUser==null || !loggedIn) return &quot;/login.xhtml?faces-redirect=true&quot;;</span>
+
+<span class="nc" id="L90">		employeService.deleteEmployeById(employeId);</span>
+<span class="nc" id="L91">		return navigateTo; </span>
+	} 
+
+	public String displayEmploye(Employe empl) 
+	{
+<span class="nc" id="L96">		String navigateTo = &quot;null&quot;;</span>
+<span class="nc bnc" id="L97" title="All 4 branches missed.">		if (authenticatedUser==null || !loggedIn) return &quot;/login.xhtml?faces-redirect=true&quot;;</span>
+
+
+<span class="nc" id="L100">		this.setPrenom(empl.getPrenom());</span>
+<span class="nc" id="L101">		this.setNom(empl.getNom());</span>
+<span class="nc" id="L102">		this.setActif(empl.isActif()); </span>
+<span class="nc" id="L103">		this.setEmail(empl.getEmail());</span>
+<span class="nc" id="L104">		this.setRole(empl.getRole());</span>
+<span class="nc" id="L105">		this.setPassword(empl.getPassword());</span>
+<span class="nc" id="L106">		this.setEmployeIdToBeUpdated(empl.getId());</span>
+
+<span class="nc" id="L108">		return navigateTo; </span>
+
+	} 
+
+	public String updateEmploye() 
+	{ 
+<span class="nc" id="L114">		String navigateTo = &quot;null&quot;;</span>
+		
+<span class="nc bnc" id="L116" title="All 4 branches missed.">		if (authenticatedUser==null || !loggedIn) return &quot;/login.xhtml?faces-redirect=true&quot;;</span>
+
+<span class="nc" id="L118">		employeService.addOrUpdateEmploye(new Employe(employeIdToBeUpdated, nom, prenom, email, password, actif, role)); </span>
+
+<span class="nc" id="L120">		return navigateTo; </span>
+
+	} 
+
+
+	// getters and setters 
+
+	public IEmployeService getEmployeService() {
+<span class="nc" id="L128">		return employeService;</span>
+	}
+
+	public void setEmployeService(IEmployeService employeService) {
+<span class="nc" id="L132">		this.employeService = employeService;</span>
+<span class="nc" id="L133">	}</span>
+
+	public String getLogin() {
+<span class="nc" id="L136">		return login;</span>
+	}
+
+	public void setLogin(String login) {
+<span class="nc" id="L140">		this.login = login;</span>
+<span class="nc" id="L141">	}</span>
+
+	public String getPassword() {
+<span class="nc" id="L144">		return password;</span>
+	}
+
+	public void setPassword(String password) {
+<span class="nc" id="L148">		this.password = password;</span>
+<span class="nc" id="L149">	}</span>
+
+
+	public List&lt;Employe&gt; getAllEmployes() {
+<span class="nc" id="L153">		return employeService.getAllEmployes();</span>
+	}
+
+	public Boolean getLoggedIn() {
+<span class="nc" id="L157">		return loggedIn;</span>
+	}
+
+	public void setLoggedIn(Boolean loggedIn) {
+<span class="nc" id="L161">		this.loggedIn = loggedIn;</span>
+<span class="nc" id="L162">	}</span>
+
+	public int ajouterEmploye(Employe employe)
+	{
+<span class="nc" id="L166">		employeService.addOrUpdateEmploye(employe);</span>
+<span class="nc" id="L167">		return employe.getId();</span>
+	}
+
+	public void mettreAjourEmailByEmployeId(String email, int employeId) {
+<span class="nc" id="L171">		employeService.mettreAjourEmailByEmployeId(email, employeId);</span>
+
+<span class="nc" id="L173">	}</span>
+
+	public void affecterEmployeADepartement(int employeId, int depId) {
+<span class="nc" id="L176">		employeService.affecterEmployeADepartement(employeId, depId);</span>
+
+<span class="nc" id="L178">	}</span>
+
+
+
+	public void desaffecterEmployeDuDepartement(int employeId, int depId)
+	{
+<span class="nc" id="L184">		employeService.desaffecterEmployeDuDepartement(employeId, depId);</span>
+<span class="nc" id="L185">	}</span>
+
+	public int ajouterContrat(Contrat contrat) {
+<span class="nc" id="L188">		employeService.ajouterContrat(contrat);</span>
+<span class="nc" id="L189">		return contrat.getReference();</span>
+	}
+
+	public void affecterContratAEmploye(int contratId, int employeId)
+	{
+<span class="nc" id="L194">		employeService.affecterContratAEmploye(contratId, employeId);</span>
+<span class="nc" id="L195">	}</span>
+
+
+	public String getEmployePrenomById(int employeId) {
+<span class="nc" id="L199">		return employeService.getEmployePrenomById(employeId);</span>
+	}
+
+	public void deleteEmployeById(int employeId) {
+<span class="nc" id="L203">		employeService.deleteEmployeById(employeId);</span>
+
+<span class="nc" id="L205">	}</span>
+	public void deleteContratById(int contratId) {
+<span class="nc" id="L207">		employeService.deleteContratById(contratId);</span>
+<span class="nc" id="L208">	}</span>
+
+	public int getNombreEmployeJPQL() {
+
+<span class="nc" id="L212">		return employeService.getNombreEmployeJPQL();</span>
+	}
+
+	public List&lt;String&gt; getAllEmployeNamesJPQL() {
+
+<span class="nc" id="L217">		return employeService.getAllEmployeNamesJPQL();</span>
+	}
+
+	public List&lt;Employe&gt; getAllEmployeByEntreprise(Entreprise entreprise) {
+<span class="nc" id="L221">		return employeService.getAllEmployeByEntreprise(entreprise);</span>
+	}
+
+	public void mettreAjourEmailByEmployeIdJPQL(String email, int employeId) {	
+<span class="nc" id="L225">		employeService.mettreAjourEmailByEmployeIdJPQL(email, employeId);</span>
+
+<span class="nc" id="L227">	}</span>
+
+	public void deleteAllContratJPQL() {
+<span class="nc" id="L230">		employeService.deleteAllContratJPQL();</span>
+
+<span class="nc" id="L232">	}</span>
+
+	public float getSalaireByEmployeIdJPQL(int employeId) {
+<span class="nc" id="L235">		return employeService.getSalaireByEmployeIdJPQL(employeId);</span>
+	}
+
+
+	public Double getSalaireMoyenByDepartementId(int departementId) {
+<span class="nc" id="L240">		return employeService.getSalaireMoyenByDepartementId(departementId);</span>
+	}
+
+	public List&lt;Timesheet&gt; getTimesheetsByMissionAndDate(Employe employe, Mission mission, Date dateDebut,
+			Date dateFin) {
+<span class="nc" id="L245">		return employeService.getTimesheetsByMissionAndDate(employe, mission, dateDebut, dateFin);</span>
+	}
+
+	public String getPrenom() {
+<span class="nc" id="L249">		return prenom;</span>
+	}
+
+	public void setPrenom(String prenom) {
+<span class="nc" id="L253">		this.prenom = prenom;</span>
+<span class="nc" id="L254">	}</span>
+
+	public String getNom() {
+<span class="nc" id="L257">		return nom;</span>
+	}
+
+	public void setNom(String nom) {
+<span class="nc" id="L261">		this.nom = nom;</span>
+<span class="nc" id="L262">	}</span>
+
+	public String getEmail() {
+<span class="nc" id="L265">		return email;</span>
+	}
+
+	public void setEmail(String email) {
+<span class="nc" id="L269">		this.email = email;</span>
+<span class="nc" id="L270">	}</span>
+
+
+
+
+	public boolean isActif() {
+<span class="nc" id="L276">		return actif;</span>
+	}
+
+	public void setActif(boolean actif) {
+<span class="nc" id="L280">		this.actif = actif;</span>
+<span class="nc" id="L281">	}</span>
+
+	public Role getRole() {
+<span class="nc" id="L284">		return role;</span>
+	}
+
+	public void setRole(Role role) {
+<span class="nc" id="L288">		this.role = role;</span>
+<span class="nc" id="L289">	}</span>
+
+	public List&lt;Employe&gt; getEmployes() {
+<span class="nc" id="L292">		employes = employeService.getAllEmployes(); </span>
+<span class="nc" id="L293">		return employes;</span>
+	}
+
+	public void setEmployes(List&lt;Employe&gt; employes) {
+<span class="nc" id="L297">		this.employes = employes;</span>
+<span class="nc" id="L298">	}</span>
+
+	public Integer getEmployeIdToBeUpdated() {
+<span class="nc" id="L301">		return employeIdToBeUpdated;</span>
+	}
+
+	public void setEmployeIdToBeUpdated(Integer employeIdToBeUpdated) {
+<span class="nc" id="L305">		this.employeIdToBeUpdated = employeIdToBeUpdated;</span>
+<span class="nc" id="L306">	}</span>
+
+	public Employe getAuthenticatedUser() {
+<span class="nc" id="L309">		return authenticatedUser;</span>
+	}
+
+	public void setAuthenticatedUser(Employe authenticatedUser) {
+<span class="nc" id="L313">		this.authenticatedUser = authenticatedUser;</span>
+<span class="nc" id="L314">	}</span>
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.3.201901230119</span></div></body></html>

@@ -1,0 +1,193 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="fr"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>Employe.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">timesheet</a> &gt; <a href="index.source.html" class="el_package">tn.esprit.spring.entities</a> &gt; <span class="el_source">Employe.java</span></div><h1>Employe.java</h1><pre class="source lang-java linenums">package tn.esprit.spring.entities;
+
+import java.io.Serializable;
+import java.util.List;
+
+import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
+import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.ManyToMany;
+import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
+import javax.validation.constraints.Pattern;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
+
+@Entity
+public class Employe implements Serializable {
+	
+	private static final long serialVersionUID = -1396669830860400871L;
+
+	@Id
+	@GeneratedValue(strategy=GenerationType.IDENTITY)
+	private int id;
+	
+	private String prenom;
+	
+	private String nom;
+	
+	//@Column(unique=true)
+	//@Pattern(regex=&quot;.+\@.+\..+&quot;)
+	private String email;
+
+	private String password;
+	
+	private boolean actif;
+	
+	@Enumerated(EnumType.STRING)
+	//@NotNull
+	private Role role;
+	
+	//@JsonBackReference  
+	@JsonIgnore
+	@ManyToMany(mappedBy=&quot;employes&quot;,fetch=FetchType.EAGER )
+	//@NotNull
+	private List&lt;Departement&gt; departements;
+	
+	@JsonIgnore
+	//@JsonBackReference
+	@OneToOne(mappedBy=&quot;employe&quot;)
+	private Contrat contrat;
+	
+	@JsonIgnore
+	//@JsonBackReference
+	@OneToMany(mappedBy=&quot;employe&quot;)
+	private List&lt;Timesheet&gt; timesheets;
+	
+	
+	public Employe() {
+<span class="nc" id="L64">		super();</span>
+<span class="nc" id="L65">	}</span>
+	
+		
+	public Employe(int id, String prenom, String nom, String email, String password, boolean actif, Role role) {
+<span class="nc" id="L69">		super();</span>
+<span class="nc" id="L70">		this.id = id;</span>
+<span class="nc" id="L71">		this.prenom = prenom;</span>
+<span class="nc" id="L72">		this.nom = nom;</span>
+<span class="nc" id="L73">		this.email = email;</span>
+<span class="nc" id="L74">		this.password = password;</span>
+<span class="nc" id="L75">		this.actif = actif;</span>
+<span class="nc" id="L76">		this.role = role;</span>
+<span class="nc" id="L77">	}</span>
+
+
+
+<span class="nc" id="L81">	public Employe(String nom, String prenom, String email, String password, boolean actif, Role role) {</span>
+<span class="nc" id="L82">		this.nom = nom;</span>
+<span class="nc" id="L83">		this.prenom = prenom;</span>
+<span class="nc" id="L84">		this.email = email;</span>
+<span class="nc" id="L85">		this.password = password;</span>
+<span class="nc" id="L86">		this.actif = actif;</span>
+<span class="nc" id="L87">		this.role = role;</span>
+<span class="nc" id="L88">	}</span>
+	
+<span class="nc" id="L90">	public Employe(String nom, String prenom, String email, boolean actif, Role role) {</span>
+<span class="nc" id="L91">		this.nom = nom;</span>
+<span class="nc" id="L92">		this.prenom = prenom;</span>
+<span class="nc" id="L93">		this.email = email;</span>
+<span class="nc" id="L94">		this.actif = actif;</span>
+<span class="nc" id="L95">		this.role = role;</span>
+<span class="nc" id="L96">	}</span>
+	
+	public int getId() {
+<span class="nc" id="L99">		return id;</span>
+	}
+
+	public void setId(int id) {
+<span class="nc" id="L103">		this.id = id;</span>
+<span class="nc" id="L104">	}</span>
+
+	public String getPrenom() {
+<span class="nc" id="L107">		return prenom;</span>
+	}
+
+	public void setPrenom(String prenom) {
+<span class="nc" id="L111">		this.prenom = prenom;</span>
+<span class="nc" id="L112">	}</span>
+
+	public String getNom() {
+<span class="nc" id="L115">		return nom;</span>
+	}
+
+	public void setNom(String nom) {
+<span class="nc" id="L119">		this.nom = nom;</span>
+<span class="nc" id="L120">	}</span>
+
+	public String getEmail() {
+<span class="nc" id="L123">		return email;</span>
+	}
+	 
+	public String getPassword() {
+<span class="nc" id="L127">		return password;</span>
+	}
+ 
+	public void setPassword(String password) {
+<span class="nc" id="L131">		this.password = password;</span>
+<span class="nc" id="L132">	}</span>
+
+	public void setEmail(String email) {
+<span class="nc" id="L135">		this.email = email;</span>
+<span class="nc" id="L136">	}</span>
+
+
+
+
+	public boolean isActif() {
+<span class="nc" id="L142">		return actif;</span>
+	}
+
+
+	public void setActif(boolean actif) {
+<span class="nc" id="L147">		this.actif = actif;</span>
+<span class="nc" id="L148">	}</span>
+
+
+	public Role getRole() {
+<span class="nc" id="L152">		return role;</span>
+	}
+
+	public void setRole(Role role) {
+<span class="nc" id="L156">		this.role = role;</span>
+<span class="nc" id="L157">	}</span>
+
+	public List&lt;Departement&gt; getDepartements() {
+<span class="nc" id="L160">		return departements;</span>
+	}
+
+	public void setDepartements(List&lt;Departement&gt; departement) {
+<span class="nc" id="L164">		this.departements = departement;</span>
+<span class="nc" id="L165">	}</span>
+
+	public Contrat getContrat() {
+<span class="nc" id="L168">		return contrat;</span>
+	}
+
+	public void setContrat(Contrat contrat) {
+<span class="nc" id="L172">		this.contrat = contrat;</span>
+<span class="nc" id="L173">	}</span>
+
+	public List&lt;Timesheet&gt; getTimesheets() {
+<span class="nc" id="L176">		return timesheets;</span>
+	}
+
+	public void setTimesheets(List&lt;Timesheet&gt; timesheets) {
+<span class="nc" id="L180">		this.timesheets = timesheets;</span>
+<span class="nc" id="L181">	}</span>
+
+
+	@Override
+	public String toString() {
+<span class="nc" id="L186">		return &quot;Employe [id=&quot; + id + &quot;, prenom=&quot; + prenom + &quot;, nom=&quot; + nom + &quot;, email=&quot; + email + &quot;, password=&quot;</span>
+				+ password + &quot;, actif=&quot; + actif + &quot;, role=&quot; + role + &quot;]&quot;;
+	}
+	
+	
+	
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.3.201901230119</span></div></body></html>

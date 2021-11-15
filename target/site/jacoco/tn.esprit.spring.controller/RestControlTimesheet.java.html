@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="fr"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>RestControlTimesheet.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">timesheet</a> &gt; <a href="index.source.html" class="el_package">tn.esprit.spring.controller</a> &gt; <span class="el_source">RestControlTimesheet.java</span></div><h1>RestControlTimesheet.java</h1><pre class="source lang-java linenums">package tn.esprit.spring.controller;
+
+import java.util.Date;
+import java.util.List;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.RestController;
+
+import tn.esprit.spring.entities.Employe;
+import tn.esprit.spring.entities.Mission;
+import tn.esprit.spring.services.IEmployeService;
+import tn.esprit.spring.services.IEntrepriseService;
+import tn.esprit.spring.services.ITimesheetService;
+
+@RestController
+<span class="nc" id="L22">public class RestControlTimesheet {</span>
+
+	@Autowired
+	IEmployeService iemployeservice;
+	@Autowired
+	IEntrepriseService ientrepriseservice;
+	@Autowired
+	ITimesheetService itimesheetservice;
+	
+	// http://localhost:8081/SpringMVC/servlet/ajouterMission
+	//{&quot;id&quot;:4,&quot;name&quot;:&quot;mamission&quot;, &quot;description&quot;:&quot;c ma mission&quot;}
+	@PostMapping(&quot;/ajouterMission&quot;)
+	@ResponseBody
+	public int ajouterMission(@RequestBody Mission mission) {
+<span class="nc" id="L36">		itimesheetservice.ajouterMission(mission);</span>
+<span class="nc" id="L37">		return mission.getId();</span>
+	}
+
+	// http://localhost:8081/SpringMVC/servlet/affecterMissionADepartement/4/4
+	@PutMapping(value = &quot;/affecterMissionADepartement/{idmission}/{iddept}&quot;) 
+	public void affecterMissionADepartement(@PathVariable(&quot;idmission&quot;) int missionId, @PathVariable(&quot;iddept&quot;) int depId) {
+<span class="nc" id="L43">		itimesheetservice.affecterMissionADepartement(missionId, depId);</span>
+<span class="nc" id="L44">	}</span>
+	
+	// http://localhost:8081/SpringMVC/servlet/ajouterTimesheet
+    //{&quot;missionId&quot;:1,&quot;employeId&quot;:2,&quot;dateDebut&quot;:&quot;2020-03-01&quot;,&quot;dateFin&quot;:&quot;2021-03-01&quot;}
+	
+	@PostMapping(&quot;/ajouterTimesheet/idmission/idemp/dated/datef&quot;)
+	@ResponseBody
+	public void ajouterTimesheet(@PathVariable(&quot;idmission&quot;) int missionId, @PathVariable(&quot;idemp&quot;) int employeId, @PathVariable(&quot;dated&quot;) Date dateDebut,@PathVariable(&quot;datef&quot;) Date dateFin) {
+<span class="nc" id="L52">		itimesheetservice.ajouterTimesheet(missionId, employeId, dateDebut, dateFin);</span>
+<span class="nc" id="L53">	}</span>
+
+	// http://localhost:8081/SpringMVC/servlet/validerTimesheet/1/1/03-10-2020/03-20-2020/1
+	@PutMapping(value = &quot;/validerTimesheet/{idmission}/{idemp}/{dated}/{datef}/{idval}&quot;) 
+	public void validerTimesheet(@PathVariable(&quot;idmission&quot;) int missionId, @PathVariable(&quot;idemp&quot;) int employeId, @PathVariable(&quot;dated&quot;) Date dateDebut,@PathVariable(&quot;datef&quot;) Date dateFin, @PathVariable(&quot;idval&quot;) int validateurId) {
+<span class="nc" id="L58">		itimesheetservice.validerTimesheet(missionId, employeId, dateDebut, dateFin, validateurId);</span>
+<span class="nc" id="L59">	}</span>
+	
+	// URL : http://localhost:8081/SpringMVC/servlet/findAllMissionByEmployeJPQL/1
+    @GetMapping(value = &quot;findAllMissionByEmployeJPQL/{idemp}&quot;)
+    @ResponseBody
+	public List&lt;Mission&gt; findAllMissionByEmployeJPQL(@PathVariable(&quot;idemp&quot;) int employeId) {
+
+<span class="nc" id="L66">		return itimesheetservice.findAllMissionByEmployeJPQL(employeId);</span>
+	}
+
+    // URL : http://localhost:8081/SpringMVC/servlet/getAllEmployeByMission/1
+    @GetMapping(value = &quot;getAllEmployeByMission/{idmission}&quot;)
+    @ResponseBody
+	public List&lt;Employe&gt; getAllEmployeByMission(@PathVariable(&quot;idmission&quot;) int missionId) {
+
+<span class="nc" id="L74">		return itimesheetservice.getAllEmployeByMission(missionId);</span>
+	}
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.3.201901230119</span></div></body></html>

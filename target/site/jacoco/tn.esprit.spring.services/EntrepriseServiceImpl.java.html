@@ -1,0 +1,177 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="fr"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>EntrepriseServiceImpl.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">timesheet</a> &gt; <a href="index.source.html" class="el_package">tn.esprit.spring.services</a> &gt; <span class="el_source">EntrepriseServiceImpl.java</span></div><h1>EntrepriseServiceImpl.java</h1><pre class="source lang-java linenums">package tn.esprit.spring.services;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
+
+import org.apache.log4j.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import tn.esprit.spring.entities.Departement;
+import tn.esprit.spring.entities.Entreprise;
+import tn.esprit.spring.repository.DepartementRepository;
+import tn.esprit.spring.repository.EntrepriseRepository;
+
+@Service
+<span class="nc" id="L18">public class EntrepriseServiceImpl implements IEntrepriseService {</span>
+
+	@Autowired
+    EntrepriseRepository entrepriseRepoistory;
+	@Autowired
+	DepartementRepository deptRepoistory;
+	
+<span class="nc" id="L25">	private static final Logger l = Logger.getLogger(EntrepriseServiceImpl.class);</span>
+
+	
+	public int ajouterEntreprise(Entreprise entreprise) {
+		try{
+<span class="nc" id="L30">			l.debug(&quot;Je vais  lancer lancer l'ajout de l'entreprise&quot;);</span>
+<span class="nc" id="L31">			entrepriseRepoistory.save(entreprise);</span>
+<span class="nc" id="L32">			l.info(&quot;Entreprise est ajouté avec succès&quot;);</span>
+		}
+<span class="nc" id="L34">		catch(Exception e){</span>
+<span class="nc" id="L35">			l.error(&quot;Erreur dans l'ajout de l'entreprise ajouterEntreprise()!!&quot;+ e);</span>
+		}
+		finally{
+<span class="nc" id="L38">			l.info(&quot;la méthode ajouterEntreprise() est finie&quot;);</span>
+		}
+<span class="nc" id="L40">		return entreprise.getId();</span>
+	}
+
+	public int ajouterDepartement(Departement dep) {
+		try{
+<span class="nc" id="L45">			l.debug(&quot;Je vais  lancer lancer l'ajout d'une département&quot;);</span>
+<span class="nc" id="L46">			deptRepoistory.save(dep);</span>
+<span class="nc" id="L47">			l.info(&quot;Département est ajoutée avec succès&quot;);</span>
+		}
+<span class="nc" id="L49">		catch(Exception e){</span>
+<span class="nc" id="L50">			l.error(&quot;Erreur dans la méthode ajouterDepartement()!!&quot;+ e);</span>
+		}
+		finally{
+<span class="nc" id="L53">			l.info(&quot;la méthode ajouterDepartement() est finie&quot;);</span>
+		}
+<span class="nc" id="L55">		return dep.getId();</span>
+	}
+	
+	public void affecterDepartementAEntreprise(int depId, int entrepriseId) {
+		//Le bout Master de cette relation N:1 est departement  
+		//donc il faut rajouter l'entreprise a departement 
+		// ==&gt; c'est l'objet departement(le master) qui va mettre a jour l'association
+		//Rappel : la classe qui contient mappedBy represente le bout Slave
+		//Rappel : Dans une relation oneToMany le mappedBy doit etre du cote one.
+
+		try{
+<span class="nc" id="L66">			l.debug(&quot;Je vais  lancer affecterDepartementAEntreprise&quot;);</span>
+<span class="nc" id="L67">			Optional&lt;Entreprise&gt; entrepriseManagedEntity = entrepriseRepoistory.findById(entrepriseId);</span>
+<span class="nc" id="L68">			Optional &lt;Departement&gt; depManagedEntity = deptRepoistory.findById(depId);</span>
+			
+<span class="nc bnc" id="L70" title="All 4 branches missed.">			if(depManagedEntity.isPresent() &amp;&amp; entrepriseManagedEntity.isPresent()){</span>
+<span class="nc" id="L71">				depManagedEntity.get().setEntreprise(entrepriseManagedEntity.get());</span>
+<span class="nc" id="L72">				deptRepoistory.save(depManagedEntity.get());</span>
+
+			}
+			
+			
+<span class="nc" id="L77">			l.info(&quot;Département est affectée à une entreprise avec succès&quot;);</span>
+		}
+<span class="nc" id="L79">		catch(Exception e){</span>
+<span class="nc" id="L80">			l.error(&quot;Erreur dans la méthode affecterDepartementAEntreprise()!!&quot;+ e);</span>
+		}
+		finally{
+<span class="nc" id="L83">			l.info(&quot;la méthode affecterDepartementAEntreprise() est finie&quot;);</span>
+		}
+
+				
+
+		
+<span class="nc" id="L89">	}</span>
+	
+	public List&lt;String&gt; getAllDepartementsNamesByEntreprise(int entrepriseId) {
+<span class="nc" id="L92">		List&lt;String&gt; depNames = new ArrayList&lt;&gt;();</span>
+		try{
+<span class="nc" id="L94">			l.debug(&quot;Je vais lancer getAllDepartementsNamesByEntreprise()&quot;);</span>
+<span class="nc" id="L95">			Optional&lt;Entreprise&gt; entrepriseManagedEntity = entrepriseRepoistory.findById(entrepriseId);</span>
+
+<span class="nc bnc" id="L97" title="All 2 branches missed.">			if(entrepriseManagedEntity.isPresent()){</span>
+<span class="nc" id="L98">			    Entreprise entreprise = entrepriseManagedEntity.get();</span>
+<span class="nc bnc" id="L99" title="All 2 branches missed.">				for(Departement dep : entreprise.getDepartements()){</span>
+<span class="nc" id="L100">					depNames.add(dep.getName());</span>
+<span class="nc" id="L101">				}</span>
+			}	
+<span class="nc" id="L103">			l.info(&quot;la méthode getAllDepartementsNamesByEntreprise est réalisé avec succès&quot;);</span>
+		}
+<span class="nc" id="L105">		catch(Exception e){</span>
+<span class="nc" id="L106">			l.error(&quot;Erreur dans la méthode getAllDepartementsNamesByEntreprise()!!&quot;+ e);</span>
+		}
+		finally{
+<span class="nc" id="L109">			l.info(&quot;la méthode getAllDepartementsNamesByEntreprise() est finie&quot;);</span>
+		}
+		
+<span class="nc" id="L112">		return depNames;</span>
+	}
+
+	@Transactional
+	public void deleteEntrepriseById(int entrepriseId) {
+		try{
+<span class="nc" id="L118">			l.debug(&quot;lancement deleteEntrepriseById()&quot;);		</span>
+<span class="nc" id="L119">			Optional&lt;Entreprise&gt; entreprise = entrepriseRepoistory.findById(entrepriseId);</span>
+			
+<span class="nc bnc" id="L121" title="All 2 branches missed.">			if(entreprise.isPresent()){	</span>
+<span class="nc" id="L122">				entrepriseRepoistory.delete(entreprise.get());	</span>
+			}
+			
+<span class="nc" id="L125">			l.info(&quot;la méthode deleteEntrepriseById() est réalisée avec succès&quot;);</span>
+		}
+<span class="nc" id="L127">		catch(Exception e){</span>
+<span class="nc" id="L128">			l.error(&quot;Erreur dans la méthode deleteEntrepriseById()!!&quot;+ e);</span>
+		}
+		finally{
+<span class="nc" id="L131">			l.info(&quot;la méthode deleteEntrepriseById() est finie&quot;);</span>
+		}
+		
+<span class="nc" id="L134">	}</span>
+
+	@Transactional
+	public void deleteDepartementById(int depId) {
+		try{
+<span class="nc" id="L139">			l.debug(&quot;lancement deleteDepartementById()&quot;);			</span>
+<span class="nc" id="L140">			Optional &lt;Departement&gt; departement = deptRepoistory.findById(depId);</span>
+<span class="nc bnc" id="L141" title="All 2 branches missed.">			if(departement.isPresent()){</span>
+<span class="nc" id="L142">				deptRepoistory.delete(departement.get());</span>
+			}
+			
+<span class="nc" id="L145">			l.info(&quot;la méthode deleteDepartementById() est réalisée avec succès&quot;);</span>
+		}
+<span class="nc" id="L147">		catch(Exception e){</span>
+<span class="nc" id="L148">			l.error(&quot;Erreur dans la méthode deleteDepartementById()!!&quot;+ e);</span>
+		}
+		finally{
+<span class="nc" id="L151">			l.info(&quot;la méthode deleteDepartementById() est finie&quot;);</span>
+		}
+<span class="nc" id="L153">	}</span>
+
+
+	public Entreprise getEntrepriseById(int entrepriseId) {
+<span class="nc" id="L157">		Entreprise entreprise = null ;</span>
+		try{
+<span class="nc" id="L159">			l.debug(&quot;lancement getEntrepriseById()&quot;);	</span>
+<span class="nc" id="L160">			Optional &lt;Entreprise&gt; entre = entrepriseRepoistory.findById(entrepriseId);</span>
+<span class="nc bnc" id="L161" title="All 2 branches missed.">			if(entre.isPresent()){</span>
+<span class="nc" id="L162">				entreprise = entre.get();</span>
+			}
+<span class="nc" id="L164">			l.info(&quot;la méthode getEntrepriseById() est réalisée avec succès&quot;);</span>
+
+		}
+<span class="nc" id="L167">		catch(Exception e){</span>
+<span class="nc" id="L168">			l.error(&quot;Erreur dans la méthode getEntrepriseById()!!&quot;+ e);</span>
+		}
+		finally{
+<span class="nc" id="L171">			l.info(&quot;la méthode getEntrepriseById() est finie&quot;);</span>
+		}
+<span class="nc" id="L173">		return entreprise;</span>
+	}
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.3.201901230119</span></div></body></html>

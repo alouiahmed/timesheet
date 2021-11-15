@@ -1,0 +1,166 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="fr"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>EmployeServiceImpl.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">timesheet</a> &gt; <a href="index.source.html" class="el_package">tn.esprit.spring.services</a> &gt; <span class="el_source">EmployeServiceImpl.java</span></div><h1>EmployeServiceImpl.java</h1><pre class="source lang-java linenums">package tn.esprit.spring.services;
+
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import tn.esprit.spring.entities.Contrat;
+import tn.esprit.spring.entities.Departement;
+import tn.esprit.spring.entities.Employe;
+import tn.esprit.spring.entities.Entreprise;
+import tn.esprit.spring.entities.Mission;
+import tn.esprit.spring.entities.Timesheet;
+import tn.esprit.spring.repository.ContratRepository;
+import tn.esprit.spring.repository.DepartementRepository;
+import tn.esprit.spring.repository.EmployeRepository;
+import tn.esprit.spring.repository.TimesheetRepository;
+
+@Service
+<span class="nc" id="L23">public class EmployeServiceImpl implements IEmployeService {</span>
+
+	@Autowired
+	EmployeRepository employeRepository;
+	@Autowired
+	DepartementRepository deptRepoistory;
+	@Autowired
+	ContratRepository contratRepoistory;
+	@Autowired
+	TimesheetRepository timesheetRepository;
+
+	@Override
+	public Employe authenticate(String login, String password) {
+<span class="nc" id="L36">		return employeRepository.getEmployeByEmailAndPassword(login, password);</span>
+	}
+
+	@Override
+	public int addOrUpdateEmploye(Employe employe) {
+<span class="nc" id="L41">		employeRepository.save(employe);</span>
+<span class="nc" id="L42">		return employe.getId();</span>
+	}
+
+
+	public void mettreAjourEmailByEmployeId(String email, int employeId) {
+<span class="nc" id="L47">		Employe employe = employeRepository.findById(employeId).get();</span>
+<span class="nc" id="L48">		employe.setEmail(email);</span>
+<span class="nc" id="L49">		employeRepository.save(employe);</span>
+
+<span class="nc" id="L51">	}</span>
+
+	@Transactional	
+	public void affecterEmployeADepartement(int employeId, int depId) {
+<span class="nc" id="L55">		Departement depManagedEntity = deptRepoistory.findById(depId).get();</span>
+<span class="nc" id="L56">		Employe employeManagedEntity = employeRepository.findById(employeId).get();</span>
+
+<span class="nc bnc" id="L58" title="All 2 branches missed.">		if(depManagedEntity.getEmployes() == null){</span>
+
+<span class="nc" id="L60">			List&lt;Employe&gt; employes = new ArrayList&lt;&gt;();</span>
+<span class="nc" id="L61">			employes.add(employeManagedEntity);</span>
+<span class="nc" id="L62">			depManagedEntity.setEmployes(employes);</span>
+<span class="nc" id="L63">		}else{</span>
+
+<span class="nc" id="L65">			depManagedEntity.getEmployes().add(employeManagedEntity);</span>
+		}
+
+		// à ajouter? 
+<span class="nc" id="L69">		deptRepoistory.save(depManagedEntity); </span>
+
+<span class="nc" id="L71">	}</span>
+	@Transactional
+	public void desaffecterEmployeDuDepartement(int employeId, int depId)
+	{
+<span class="nc" id="L75">		Departement dep = deptRepoistory.findById(depId).get();</span>
+
+<span class="nc" id="L77">		int employeNb = dep.getEmployes().size();</span>
+<span class="nc bnc" id="L78" title="All 2 branches missed.">		for(int index = 0; index &lt; employeNb; index++){</span>
+<span class="nc bnc" id="L79" title="All 2 branches missed.">			if(dep.getEmployes().get(index).getId() == employeId){</span>
+<span class="nc" id="L80">				dep.getEmployes().remove(index);</span>
+<span class="nc" id="L81">				break;//a revoir</span>
+			}
+		}
+<span class="nc" id="L84">	} </span>
+	
+	// Tablesapce (espace disque) 
+
+	public int ajouterContrat(Contrat contrat) {
+<span class="nc" id="L89">		contratRepoistory.save(contrat);</span>
+<span class="nc" id="L90">		return contrat.getReference();</span>
+	}
+
+	public void affecterContratAEmploye(int contratId, int employeId) {
+<span class="nc" id="L94">		Contrat contratManagedEntity = contratRepoistory.findById(contratId).get();</span>
+<span class="nc" id="L95">		Employe employeManagedEntity = employeRepository.findById(employeId).get();</span>
+
+<span class="nc" id="L97">		contratManagedEntity.setEmploye(employeManagedEntity);</span>
+<span class="nc" id="L98">		contratRepoistory.save(contratManagedEntity);</span>
+
+<span class="nc" id="L100">	}</span>
+
+	public String getEmployePrenomById(int employeId) {
+<span class="nc" id="L103">		Employe employeManagedEntity = employeRepository.findById(employeId).get();</span>
+<span class="nc" id="L104">		return employeManagedEntity.getPrenom();</span>
+	}
+	 
+	public void deleteEmployeById(int employeId)
+	{
+<span class="nc" id="L109">		Employe employe = employeRepository.findById(employeId).get();</span>
+
+		//Desaffecter l'employe de tous les departements
+		//c'est le bout master qui permet de mettre a jour
+		//la table d'association
+<span class="nc bnc" id="L114" title="All 2 branches missed.">		for(Departement dep : employe.getDepartements()){</span>
+<span class="nc" id="L115">			dep.getEmployes().remove(employe);</span>
+<span class="nc" id="L116">		}</span>
+
+<span class="nc" id="L118">		employeRepository.delete(employe);</span>
+<span class="nc" id="L119">	}</span>
+
+	public void deleteContratById(int contratId) {
+<span class="nc" id="L122">		Contrat contratManagedEntity = contratRepoistory.findById(contratId).get();</span>
+<span class="nc" id="L123">		contratRepoistory.delete(contratManagedEntity);</span>
+
+<span class="nc" id="L125">	}</span>
+
+	public int getNombreEmployeJPQL() {
+<span class="nc" id="L128">		return employeRepository.countemp();</span>
+	}
+
+	public List&lt;String&gt; getAllEmployeNamesJPQL() {
+<span class="nc" id="L132">		return employeRepository.employeNames();</span>
+
+	}
+
+	public List&lt;Employe&gt; getAllEmployeByEntreprise(Entreprise entreprise) {
+<span class="nc" id="L137">		return employeRepository.getAllEmployeByEntreprisec(entreprise);</span>
+	}
+
+	public void mettreAjourEmailByEmployeIdJPQL(String email, int employeId) {
+<span class="nc" id="L141">		employeRepository.mettreAjourEmailByEmployeIdJPQL(email, employeId);</span>
+
+<span class="nc" id="L143">	}</span>
+	public void deleteAllContratJPQL() {
+<span class="nc" id="L145">		employeRepository.deleteAllContratJPQL();</span>
+<span class="nc" id="L146">	}</span>
+
+	public float getSalaireByEmployeIdJPQL(int employeId) {
+<span class="nc" id="L149">		return employeRepository.getSalaireByEmployeIdJPQL(employeId);</span>
+	}
+
+	public Double getSalaireMoyenByDepartementId(int departementId) {
+<span class="nc" id="L153">		return employeRepository.getSalaireMoyenByDepartementId(departementId);</span>
+	}
+
+	public List&lt;Timesheet&gt; getTimesheetsByMissionAndDate(Employe employe, Mission mission, Date dateDebut,
+			Date dateFin) {
+<span class="nc" id="L158">		return timesheetRepository.getTimesheetsByMissionAndDate(employe, mission, dateDebut, dateFin);</span>
+	}
+
+	public List&lt;Employe&gt; getAllEmployes() {
+<span class="nc" id="L162">		return (List&lt;Employe&gt;) employeRepository.findAll();</span>
+	}
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.3.201901230119</span></div></body></html>

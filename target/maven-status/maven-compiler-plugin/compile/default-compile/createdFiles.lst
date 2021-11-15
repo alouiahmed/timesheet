@@ -3,6 +3,7 @@ tn\esprit\spring\controller\ControllerEntrepriseImpl.class
 tn\esprit\spring\entities\Employe.class
 tn\esprit\spring\entities\Departement.class
 tn\esprit\spring\controller\ControllerTimesheetImpl.class
+tn\esprit\spring\controller\RestControlDepartement.class
 tn\esprit\spring\entities\Timesheet.class
 tn\esprit\spring\services\IEntrepriseService.class
 tn\esprit\spring\controller\RestControlEntreprise.class

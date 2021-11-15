@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="fr"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>TimesheetServiceImpl.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">timesheet</a> &gt; <a href="index.source.html" class="el_package">tn.esprit.spring.services</a> &gt; <span class="el_source">TimesheetServiceImpl.java</span></div><h1>TimesheetServiceImpl.java</h1><pre class="source lang-java linenums">package tn.esprit.spring.services;
+
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.List;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import tn.esprit.spring.entities.Departement;
+import tn.esprit.spring.entities.Employe;
+import tn.esprit.spring.entities.Mission;
+import tn.esprit.spring.entities.Role;
+import tn.esprit.spring.entities.Timesheet;
+import tn.esprit.spring.entities.TimesheetPK;
+import tn.esprit.spring.repository.DepartementRepository;
+import tn.esprit.spring.repository.EmployeRepository;
+import tn.esprit.spring.repository.MissionRepository;
+import tn.esprit.spring.repository.TimesheetRepository;
+
+@Service
+<span class="nc" id="L22">public class TimesheetServiceImpl implements ITimesheetService {</span>
+	
+
+	@Autowired
+	MissionRepository missionRepository;
+	@Autowired
+	DepartementRepository deptRepoistory;
+	@Autowired
+	TimesheetRepository timesheetRepository;
+	@Autowired
+	EmployeRepository employeRepository;
+	
+	public int ajouterMission(Mission mission) {
+<span class="nc" id="L35">		missionRepository.save(mission);</span>
+<span class="nc" id="L36">		return mission.getId();</span>
+	}
+    
+	public void affecterMissionADepartement(int missionId, int depId) {
+<span class="nc" id="L40">		Mission mission = missionRepository.findById(missionId).get();</span>
+<span class="nc" id="L41">		Departement dep = deptRepoistory.findById(depId).get();</span>
+<span class="nc" id="L42">		mission.setDepartement(dep);</span>
+<span class="nc" id="L43">		missionRepository.save(mission);</span>
+		
+<span class="nc" id="L45">	}</span>
+
+	public void ajouterTimesheet(int missionId, int employeId, Date dateDebut, Date dateFin) {
+<span class="nc" id="L48">		TimesheetPK timesheetPK = new TimesheetPK();</span>
+<span class="nc" id="L49">		timesheetPK.setDateDebut(dateDebut);</span>
+<span class="nc" id="L50">		timesheetPK.setDateFin(dateFin);</span>
+<span class="nc" id="L51">		timesheetPK.setIdEmploye(employeId);</span>
+<span class="nc" id="L52">		timesheetPK.setIdMission(missionId);</span>
+		
+<span class="nc" id="L54">		Timesheet timesheet = new Timesheet();</span>
+<span class="nc" id="L55">		timesheet.setTimesheetPK(timesheetPK);</span>
+<span class="nc" id="L56">		timesheet.setValide(false); //par defaut non valide</span>
+<span class="nc" id="L57">		timesheetRepository.save(timesheet);</span>
+		
+<span class="nc" id="L59">	}</span>
+
+	
+	public void validerTimesheet(int missionId, int employeId, Date dateDebut, Date dateFin, int validateurId) {
+<span class="nc" id="L63">		System.out.println(&quot;In valider Timesheet&quot;);</span>
+<span class="nc" id="L64">		Employe validateur = employeRepository.findById(validateurId).get();</span>
+<span class="nc" id="L65">		Mission mission = missionRepository.findById(missionId).get();</span>
+		//verifier s'il est un chef de departement (interet des enum)
+<span class="nc bnc" id="L67" title="All 2 branches missed.">		if(!validateur.getRole().equals(Role.CHEF_DEPARTEMENT)){</span>
+<span class="nc" id="L68">			System.out.println(&quot;l'employe doit etre chef de departement pour valider une feuille de temps !&quot;);</span>
+<span class="nc" id="L69">			return;</span>
+		}
+		//verifier s'il est le chef de departement de la mission en question
+<span class="nc" id="L72">		boolean chefDeLaMission = false;</span>
+<span class="nc bnc" id="L73" title="All 2 branches missed.">		for(Departement dep : validateur.getDepartements()){</span>
+<span class="nc bnc" id="L74" title="All 2 branches missed.">			if(dep.getId() == mission.getDepartement().getId()){</span>
+<span class="nc" id="L75">				chefDeLaMission = true;</span>
+<span class="nc" id="L76">				break;</span>
+			}
+<span class="nc" id="L78">		}</span>
+<span class="nc bnc" id="L79" title="All 2 branches missed.">		if(!chefDeLaMission){</span>
+<span class="nc" id="L80">			System.out.println(&quot;l'employe doit etre chef de departement de la mission en question&quot;);</span>
+<span class="nc" id="L81">			return;</span>
+		}
+//
+<span class="nc" id="L84">		TimesheetPK timesheetPK = new TimesheetPK(missionId, employeId, dateDebut, dateFin);</span>
+<span class="nc" id="L85">		Timesheet timesheet =timesheetRepository.findBytimesheetPK(timesheetPK);</span>
+<span class="nc" id="L86">		timesheet.setValide(true);</span>
+		
+		//Comment Lire une date de la base de données
+<span class="nc" id="L89">		SimpleDateFormat dateFormat = new SimpleDateFormat(&quot;dd/MM/yyyy&quot;);</span>
+<span class="nc" id="L90">		System.out.println(&quot;dateDebut : &quot; + dateFormat.format(timesheet.getTimesheetPK().getDateDebut()));</span>
+		
+<span class="nc" id="L92">	}</span>
+
+	
+	public List&lt;Mission&gt; findAllMissionByEmployeJPQL(int employeId) {
+<span class="nc" id="L96">		return timesheetRepository.findAllMissionByEmployeJPQL(employeId);</span>
+	}
+
+	
+	public List&lt;Employe&gt; getAllEmployeByMission(int missionId) {
+<span class="nc" id="L101">		return timesheetRepository.getAllEmployeByMission(missionId);</span>
+	}
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.3.201901230119</span></div></body></html>
