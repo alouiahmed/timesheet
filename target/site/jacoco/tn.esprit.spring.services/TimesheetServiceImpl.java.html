@@ -3,6 +3,8 @@
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
+import java.util.Optional;
+import org.apache.log4j.Logger;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -19,8 +21,8 @@ import tn.esprit.spring.repository.MissionRepository;
 import tn.esprit.spring.repository.TimesheetRepository;
 
 @Service
-<span class="nc" id="L22">public class TimesheetServiceImpl implements ITimesheetService {</span>
-	
+<span class="nc" id="L24">public class TimesheetServiceImpl implements ITimesheetService {</span>
+<span class="nc" id="L25">	private static final Logger l = Logger.getLogger(TimesheetServiceImpl.class);</span>
 
 	@Autowired
 	MissionRepository missionRepository;
@@ -32,73 +34,79 @@ import tn.esprit.spring.repository.TimesheetRepository;
 	EmployeRepository employeRepository;
 	
 	public int ajouterMission(Mission mission) {
-<span class="nc" id="L35">		missionRepository.save(mission);</span>
-<span class="nc" id="L36">		return mission.getId();</span>
+<span class="nc" id="L37">		missionRepository.save(mission);</span>
+<span class="nc" id="L38">		return mission.getId();</span>
 	}
     
 	public void affecterMissionADepartement(int missionId, int depId) {
-<span class="nc" id="L40">		Mission mission = missionRepository.findById(missionId).get();</span>
-<span class="nc" id="L41">		Departement dep = deptRepoistory.findById(depId).get();</span>
-<span class="nc" id="L42">		mission.setDepartement(dep);</span>
-<span class="nc" id="L43">		missionRepository.save(mission);</span>
+<span class="nc" id="L42">		Optional&lt;Mission&gt; mission = missionRepository.findById(missionId);</span>
+<span class="nc" id="L43">		Optional&lt;Departement&gt; dep = deptRepoistory.findById(depId);</span>
+
+<span class="nc bnc" id="L45" title="All 4 branches missed.">		if(mission.isPresent() &amp;&amp; dep.isPresent()) {</span>
 		
-<span class="nc" id="L45">	}</span>
+<span class="nc" id="L47">		mission.get().setDepartement(dep.get());</span>
+<span class="nc" id="L48">		missionRepository.save(mission.get());</span>
+		}
+<span class="nc" id="L50">	}</span>
 
 	public void ajouterTimesheet(int missionId, int employeId, Date dateDebut, Date dateFin) {
-<span class="nc" id="L48">		TimesheetPK timesheetPK = new TimesheetPK();</span>
-<span class="nc" id="L49">		timesheetPK.setDateDebut(dateDebut);</span>
-<span class="nc" id="L50">		timesheetPK.setDateFin(dateFin);</span>
-<span class="nc" id="L51">		timesheetPK.setIdEmploye(employeId);</span>
-<span class="nc" id="L52">		timesheetPK.setIdMission(missionId);</span>
+<span class="nc" id="L53">		TimesheetPK timesheetPK = new TimesheetPK();</span>
+<span class="nc" id="L54">		timesheetPK.setDateDebut(dateDebut);</span>
+<span class="nc" id="L55">		timesheetPK.setDateFin(dateFin);</span>
+<span class="nc" id="L56">		timesheetPK.setIdEmploye(employeId);</span>
+<span class="nc" id="L57">		timesheetPK.setIdMission(missionId);</span>
 		
-<span class="nc" id="L54">		Timesheet timesheet = new Timesheet();</span>
-<span class="nc" id="L55">		timesheet.setTimesheetPK(timesheetPK);</span>
-<span class="nc" id="L56">		timesheet.setValide(false); //par defaut non valide</span>
-<span class="nc" id="L57">		timesheetRepository.save(timesheet);</span>
+<span class="nc" id="L59">		Timesheet timesheet = new Timesheet();</span>
+<span class="nc" id="L60">		timesheet.setTimesheetPK(timesheetPK);</span>
+<span class="nc" id="L61">		timesheet.setValide(false); //par defaut non valide</span>
+<span class="nc" id="L62">		timesheetRepository.save(timesheet);</span>
 		
-<span class="nc" id="L59">	}</span>
+<span class="nc" id="L64">	}</span>
 
 	
 	public void validerTimesheet(int missionId, int employeId, Date dateDebut, Date dateFin, int validateurId) {
-<span class="nc" id="L63">		System.out.println(&quot;In valider Timesheet&quot;);</span>
-<span class="nc" id="L64">		Employe validateur = employeRepository.findById(validateurId).get();</span>
-<span class="nc" id="L65">		Mission mission = missionRepository.findById(missionId).get();</span>
+<span class="nc" id="L68">		l.info(&quot;In valider Timesheet&quot;);</span>
+		
+<span class="nc" id="L70">		Optional&lt;Employe&gt; validateur = employeRepository.findById(validateurId);</span>
+<span class="nc" id="L71">		Optional&lt;Mission&gt; mission = missionRepository.findById(missionId);</span>
+
+<span class="nc bnc" id="L73" title="All 4 branches missed.">		if(validateur.isPresent() &amp;&amp; mission.isPresent()) {</span>
 		//verifier s'il est un chef de departement (interet des enum)
-<span class="nc bnc" id="L67" title="All 2 branches missed.">		if(!validateur.getRole().equals(Role.CHEF_DEPARTEMENT)){</span>
-<span class="nc" id="L68">			System.out.println(&quot;l'employe doit etre chef de departement pour valider une feuille de temps !&quot;);</span>
-<span class="nc" id="L69">			return;</span>
+<span class="nc bnc" id="L75" title="All 2 branches missed.">		if(!validateur.get().getRole().equals(Role.CHEF_DEPARTEMENT)){</span>
+<span class="nc" id="L76">			l.info(&quot;l'employe doit etre chef de departement pour valider une feuille de temps !&quot;);</span>
+<span class="nc" id="L77">			return;</span>
 		}
 		//verifier s'il est le chef de departement de la mission en question
-<span class="nc" id="L72">		boolean chefDeLaMission = false;</span>
-<span class="nc bnc" id="L73" title="All 2 branches missed.">		for(Departement dep : validateur.getDepartements()){</span>
-<span class="nc bnc" id="L74" title="All 2 branches missed.">			if(dep.getId() == mission.getDepartement().getId()){</span>
-<span class="nc" id="L75">				chefDeLaMission = true;</span>
-<span class="nc" id="L76">				break;</span>
+<span class="nc" id="L80">		boolean chefDeLaMission = false;</span>
+<span class="nc bnc" id="L81" title="All 2 branches missed.">		for(Departement dep : validateur.get().getDepartements()){</span>
+<span class="nc bnc" id="L82" title="All 2 branches missed.">			if(dep.getId() == mission.get().getDepartement().getId()){</span>
+<span class="nc" id="L83">				chefDeLaMission = true;</span>
+<span class="nc" id="L84">				break;</span>
 			}
-<span class="nc" id="L78">		}</span>
-<span class="nc bnc" id="L79" title="All 2 branches missed.">		if(!chefDeLaMission){</span>
-<span class="nc" id="L80">			System.out.println(&quot;l'employe doit etre chef de departement de la mission en question&quot;);</span>
-<span class="nc" id="L81">			return;</span>
+<span class="nc" id="L86">		}</span>
+<span class="nc bnc" id="L87" title="All 2 branches missed.">		if(!chefDeLaMission){</span>
+<span class="nc" id="L88">			l.info(&quot;l'employe doit etre chef de departement de la mission en question&quot;);</span>
+<span class="nc" id="L89">			return;</span>
 		}
 //
-<span class="nc" id="L84">		TimesheetPK timesheetPK = new TimesheetPK(missionId, employeId, dateDebut, dateFin);</span>
-<span class="nc" id="L85">		Timesheet timesheet =timesheetRepository.findBytimesheetPK(timesheetPK);</span>
-<span class="nc" id="L86">		timesheet.setValide(true);</span>
+<span class="nc" id="L92">		TimesheetPK timesheetPK = new TimesheetPK(missionId, employeId, dateDebut, dateFin);</span>
+<span class="nc" id="L93">		Timesheet timesheet =timesheetRepository.findBytimesheetPK(timesheetPK);</span>
+<span class="nc" id="L94">		timesheet.setValide(true);</span>
 		
 		//Comment Lire une date de la base de données
-<span class="nc" id="L89">		SimpleDateFormat dateFormat = new SimpleDateFormat(&quot;dd/MM/yyyy&quot;);</span>
-<span class="nc" id="L90">		System.out.println(&quot;dateDebut : &quot; + dateFormat.format(timesheet.getTimesheetPK().getDateDebut()));</span>
+<span class="nc" id="L97">		SimpleDateFormat dateFormat = new SimpleDateFormat(&quot;dd/MM/yyyy&quot;);</span>
+<span class="nc" id="L98">		l.info(&quot;dateDebut : &quot; + dateFormat.format(timesheet.getTimesheetPK().getDateDebut()));</span>
 		
-<span class="nc" id="L92">	}</span>
+	}
 
-	
+<span class="nc" id="L102">	}</span>
 	public List&lt;Mission&gt; findAllMissionByEmployeJPQL(int employeId) {
-<span class="nc" id="L96">		return timesheetRepository.findAllMissionByEmployeJPQL(employeId);</span>
+<span class="nc" id="L104">		return timesheetRepository.findAllMissionByEmployeJPQL(employeId);</span>
 	}
 
 	
 	public List&lt;Employe&gt; getAllEmployeByMission(int missionId) {
-<span class="nc" id="L101">		return timesheetRepository.getAllEmployeByMission(missionId);</span>
+<span class="nc" id="L109">		return timesheetRepository.getAllEmployeByMission(missionId);</span>
 	}
 
 }
