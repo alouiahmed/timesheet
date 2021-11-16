@@ -28,14 +28,6 @@ pipeline {
                     bat "mvn sonar:sonar"
                   }
             }
-
- 			stage ('Email notification') {
-            
-            steps{
-            emailext attachLog: true, body: 'Logs', subject: 'Timesheet logs', to: 'nada.ben.aissaa@gmail.com'
-
-            }            
-        	}
 			
 			stage('Building Docker Image'){
 				steps{
@@ -54,6 +46,13 @@ pipeline {
 				}
 			}
 			
+			stage ('Email notification') {
+            
+            steps{
+            emailext attachLog: true, body: 'Logs', subject: 'Timesheet logs', to: 'nada.ben.aissaa@gmail.com'
+
+            }            
+        	}
 			
 		    
 		    stage('Cleanup Workspace'){
