@@ -44,7 +44,7 @@ public class DepartementServiceImpl implements IDepartementService {
 		if (depatementManagedEntity.isPresent()){
 			return depatementManagedEntity.get();	
 		}
-		return depatementManagedEntity.get();	
+		return null;
 
 	}
 
