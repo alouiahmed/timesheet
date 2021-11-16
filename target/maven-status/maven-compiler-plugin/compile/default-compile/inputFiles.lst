@@ -25,6 +25,7 @@ C:\Users\asus\Desktop\timesheet\src\main\java\tn\esprit\spring\entities\MissionE
 C:\Users\asus\Desktop\timesheet\src\main\java\tn\esprit\spring\entities\Employe.java
 C:\Users\asus\Desktop\timesheet\src\main\java\tn\esprit\spring\services\TimesheetServiceImpl.java
 C:\Users\asus\Desktop\timesheet\src\main\java\tn\esprit\spring\services\ContratServiceImpl.java
+C:\Users\asus\Desktop\timesheet\src\main\java\tn\esprit\spring\entities\DepartementDTO.java
 C:\Users\asus\Desktop\timesheet\src\main\java\tn\esprit\spring\controller\ControllerEntrepriseImpl.java
 C:\Users\asus\Desktop\timesheet\src\main\java\tn\esprit\spring\services\IDepartementService.java
 C:\Users\asus\Desktop\timesheet\src\main\java\tn\esprit\spring\config\LoginFilter.java

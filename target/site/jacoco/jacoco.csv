@@ -13,6 +13,7 @@ timesheet,tn.esprit.spring.services,DepartementServiceImpl,46,0,4,0,12,0,7,0,5,0
 timesheet,tn.esprit.spring.services,TimesheetServiceImpl,190,0,16,0,44,0,16,0,8,0
 timesheet,tn.esprit.spring.services,EntrepriseServiceImpl,278,0,14,0,68,0,16,0,9,0
 timesheet,tn.esprit.spring.config,LoginFilter,41,0,6,0,9,0,5,0,2,0
+timesheet,tn.esprit.spring.entities,DepartementDTO,44,0,0,0,18,0,12,0,12,0
 timesheet,tn.esprit.spring.entities,Contrat,50,0,0,0,22,0,12,0,12,0
 timesheet,tn.esprit.spring.entities,Employe,178,0,0,0,57,0,25,0,25,0
 timesheet,tn.esprit.spring.entities,Timesheet,31,0,0,0,13,0,9,0,9,0

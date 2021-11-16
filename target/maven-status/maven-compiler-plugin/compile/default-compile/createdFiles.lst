@@ -1,4 +1,5 @@
 tn\esprit\spring\repository\EntrepriseRepository.class
+tn\esprit\spring\entities\DepartementDTO.class
 tn\esprit\spring\controller\ControllerEntrepriseImpl.class
 tn\esprit\spring\entities\Employe.class
 tn\esprit\spring\entities\Departement.class
