@@ -2,7 +2,7 @@ pipeline {
 
 	agent any 
 	environment { 
-        registry = "marwenv1/timesheet" 
+        registry = "bennada/timesheet" 
 		registryCredential = 'dockerHub'
         dockerImage = '' 
        
