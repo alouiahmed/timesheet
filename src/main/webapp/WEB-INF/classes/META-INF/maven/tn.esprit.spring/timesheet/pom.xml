@@ -10,7 +10,7 @@
 	</parent>
 	<groupId>tn.esprit.spring</groupId>
 	<artifactId>timesheet</artifactId>
-	<version>1.5.0-SNAPSHOT</version>
+	<version>1.6.0-SNAPSHOT</version>
 	<name>timesheet</name>
 	<description>timesheet</description>
 
@@ -20,7 +20,7 @@
 		<maven-jar-plugin.version>3.1.1</maven-jar-plugin.version>
 		
 		<!-- jacoco -->
-		<jacoco.version>0.8.3</jacoco.version>
+		<jacoco.version>0.8.3</jacoco.version> 
 		<sonar.java.coveragePlugin>jacoco</sonar.java.coveragePlugin>
 		<sonar.dynamicAnalysis>reuseReports</sonar.dynamicAnalysis>
 		<sonar.jacoco.reportPath>${project.basedir}/../target/jacoco.exec</sonar.jacoco.reportPath>

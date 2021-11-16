@@ -1,6 +1,7 @@
 package tn.esprit.spring.services;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -28,14 +29,23 @@ public class DepartementServiceImpl implements IDepartementService {
 
 	@Override
 	public void deleteDepartementById(int depId) {
-		deptRepoistory.delete(deptRepoistory.findById(depId).get());	
+		Optional<Departement> depatementManagedEntity = deptRepoistory.findById(depId);
+		
+		if (depatementManagedEntity.isPresent()){
+			deptRepoistory.delete(depatementManagedEntity.get());
+		}
+			
 		
 	}
 
 	@Override
 	public Departement getDepBytId(int depId) {
-		
-		return deptRepoistory.findById(depId).get();	
+		Optional<Departement> depatementManagedEntity = deptRepoistory.findById(depId);
+		if (depatementManagedEntity.isPresent()){
+			return depatementManagedEntity.get();	
+		}
+		return depatementManagedEntity.get();	
+
 	}
 
 }
