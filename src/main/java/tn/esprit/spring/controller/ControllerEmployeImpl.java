@@ -1,6 +1,6 @@
 package tn.esprit.spring.controller;
 
-import java.util.Date;
+
 import java.util.List;
 
 import javax.faces.application.FacesMessage;
@@ -11,13 +11,9 @@ import org.ocpsoft.rewrite.el.ELBeanName;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Controller;
-
-import tn.esprit.spring.entities.Contrat;
 import tn.esprit.spring.entities.Employe;
 import tn.esprit.spring.entities.Entreprise;
-import tn.esprit.spring.entities.Mission;
 import tn.esprit.spring.entities.Role;
-import tn.esprit.spring.entities.Timesheet;
 import tn.esprit.spring.services.IEmployeService;
 
 
@@ -28,8 +24,7 @@ import tn.esprit.spring.services.IEmployeService;
 public class ControllerEmployeImpl  {
 
 	@Autowired
-	IEmployeService employeService;
-private static final String LOGOUT = "/login.xhtml?faces-redirect=true";
+IEmployeService employeService;
 	private String login; 
 	private String password; 
 	private Boolean loggedIn;
@@ -46,7 +41,7 @@ private static final String LOGOUT = "/login.xhtml?faces-redirect=true";
 
 	private Integer employeIdToBeUpdated; // getter et setter
 
-
+    public static final String url="/login.xhtml?faces-redirect=true";
 	public String doLogin() {
 
 		String navigateTo = "null";
@@ -70,13 +65,13 @@ private static final String LOGOUT = "/login.xhtml?faces-redirect=true";
 	{
 		FacesContext.getCurrentInstance().getExternalContext().invalidateSession();
 	
-	return LOGOUT;
+	return url;
 	}
 
 
 	public String addEmploye() {
 
-		if (authenticatedUser==null || !loggedIn) return LOGOUT;
+		if (authenticatedUser==null || !loggedIn) return url;
 
 		employeService.addOrUpdateEmploye(new Employe(nom, prenom, email, password, actif, role)); 
 		return "null"; 
@@ -84,7 +79,7 @@ private static final String LOGOUT = "/login.xhtml?faces-redirect=true";
 
 	public String removeEmploye(int employeId) {
 		String navigateTo = "null";
-		if (authenticatedUser==null || !loggedIn) return LOGOUT;
+		if (authenticatedUser==null || !loggedIn) return url;
 
 		employeService.deleteEmployeById(employeId);
 		return navigateTo; 
@@ -93,7 +88,7 @@ private static final String LOGOUT = "/login.xhtml?faces-redirect=true";
 	public String displayEmploye(Employe empl) 
 	{
 		String navigateTo = "null";
-		if (authenticatedUser==null || !loggedIn) return LOGOUT;
+		if (authenticatedUser==null || !loggedIn) return url;
 
 
 		this.setPrenom(empl.getPrenom());
@@ -112,7 +107,7 @@ private static final String LOGOUT = "/login.xhtml?faces-redirect=true";
 	{ 
 		String navigateTo = "null";
 		
-		if (authenticatedUser==null || !loggedIn) return LOGOUT;
+		if (authenticatedUser==null || !loggedIn) return url;
 
 		employeService.addOrUpdateEmploye(new Employe(employeIdToBeUpdated, nom, prenom, email, password, actif, role)); 
 
@@ -183,10 +178,7 @@ private static final String LOGOUT = "/login.xhtml?faces-redirect=true";
 		employeService.desaffecterEmployeDuDepartement(employeId, depId);
 	}
 
-	public int ajouterContrat(Contrat contrat) {
-		employeService.ajouterContrat(contrat);
-		return contrat.getReference();
-	}
+
 
 	public void affecterContratAEmploye(int contratId, int employeId)
 	{
@@ -202,9 +194,7 @@ private static final String LOGOUT = "/login.xhtml?faces-redirect=true";
 		employeService.deleteEmployeById(employeId);
 
 	}
-	public void deleteContratById(int contratId) {
-		employeService.deleteContratById(contratId);
-	}
+
 
 	public int getNombreEmployeJPQL() {
 
@@ -225,10 +215,6 @@ private static final String LOGOUT = "/login.xhtml?faces-redirect=true";
 
 	}
 
-	public void deleteAllContratJPQL() {
-		employeService.deleteAllContratJPQL();
-
-	}
 
 	public float getSalaireByEmployeIdJPQL(int employeId) {
 		return employeService.getSalaireByEmployeIdJPQL(employeId);
@@ -239,10 +225,7 @@ private static final String LOGOUT = "/login.xhtml?faces-redirect=true";
 		return employeService.getSalaireMoyenByDepartementId(departementId);
 	}
 
-	public List<Timesheet> getTimesheetsByMissionAndDate(Employe employe, Mission mission, Date dateDebut,
-			Date dateFin) {
-		return employeService.getTimesheetsByMissionAndDate(employe, mission, dateDebut, dateFin);
-	}
+
 
 	public String getPrenom() {
 		return prenom;
