@@ -33,7 +33,7 @@ public class EntrepriseServiceImplTest {
 	
 	@Test
 	public void testAjouterEntreprise()  {  
-		l.info("In methode testAjouterEntreprise()");
+		l.info("Dans methode testAjouterEntreprise()");
 		 idE=ientrepriseservice.ajouterEntreprise(new Entreprise("sabrine","sab "));
 		assertNotNull(idE);
 		l.info("Out methode testAjouterEntreprise()");
